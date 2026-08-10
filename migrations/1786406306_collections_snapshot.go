@@ -913,70 +913,13 @@ func init() {
 						"type": "text"
 					},
 					{
-						"help": "",
-						"hidden": false,
-						"id": "select2363381545",
-						"maxSelect": 0,
-						"name": "type",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "select",
-						"values": [
-							"import_folders"
-						]
-					},
-					{
-						"help": "",
-						"hidden": false,
-						"id": "select2063623452",
-						"maxSelect": 0,
-						"name": "status",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "select",
-						"values": [
-							"queued",
-							"running",
-							"completed",
-							"failed"
-						]
-					},
-					{
-						"help": "",
-						"hidden": false,
-						"id": "number3257917790",
-						"max": null,
-						"min": null,
-						"name": "total",
-						"onlyInt": false,
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "number"
-					},
-					{
-						"help": "",
-						"hidden": false,
-						"id": "number670768011",
-						"max": null,
-						"min": null,
-						"name": "processed",
-						"onlyInt": false,
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "number"
-					},
-					{
 						"autogeneratePattern": "",
 						"help": "",
 						"hidden": false,
-						"id": "text3065852031",
+						"id": "text724990059",
 						"max": 0,
 						"min": 0,
-						"name": "message",
+						"name": "title",
 						"pattern": "",
 						"presentable": false,
 						"primaryKey": false,
@@ -987,37 +930,27 @@ func init() {
 					{
 						"help": "",
 						"hidden": false,
-						"id": "json325763347",
+						"id": "json3485334036",
 						"maxSize": 0,
-						"name": "result",
+						"name": "note",
 						"presentable": false,
 						"required": false,
 						"system": false,
 						"type": "json"
 					},
 					{
+						"cascadeDelete": false,
+						"collectionId": "pbc_3961493164",
 						"help": "",
 						"hidden": false,
-						"id": "date3029767898",
-						"max": "",
-						"min": "",
-						"name": "started",
+						"id": "relation3797779838",
+						"maxSelect": 0,
+						"minSelect": 0,
+						"name": "context",
 						"presentable": false,
 						"required": false,
 						"system": false,
-						"type": "date"
-					},
-					{
-						"help": "",
-						"hidden": false,
-						"id": "date2790239036",
-						"max": "",
-						"min": "",
-						"name": "finished",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "date"
+						"type": "relation"
 					},
 					{
 						"hidden": false,
@@ -1040,10 +973,74 @@ func init() {
 						"type": "autodate"
 					}
 				],
-				"id": "pbc_2409499253",
+				"id": "pbc_3395098727",
 				"indexes": [],
 				"listRule": null,
-				"name": "jobs",
+				"name": "notes",
+				"system": false,
+				"type": "base",
+				"updateRule": null,
+				"viewRule": null
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "[a-z0-9]{15}",
+						"help": "",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 15,
+						"min": 15,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"autogeneratePattern": "",
+						"help": "",
+						"hidden": false,
+						"id": "text3797779838",
+						"max": 0,
+						"min": 0,
+						"name": "context",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": false,
+						"system": false,
+						"type": "text"
+					},
+					{
+						"hidden": false,
+						"id": "autodate2990389176",
+						"name": "created",
+						"onCreate": true,
+						"onUpdate": false,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					},
+					{
+						"hidden": false,
+						"id": "autodate3332085495",
+						"name": "updated",
+						"onCreate": true,
+						"onUpdate": true,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					}
+				],
+				"id": "pbc_3961493164",
+				"indexes": [],
+				"listRule": null,
+				"name": "contexts",
 				"system": false,
 				"type": "base",
 				"updateRule": null,
