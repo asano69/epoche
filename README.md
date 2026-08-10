@@ -1,6 +1,6 @@
-# myapp
+# epoche
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/asano69/myapp)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/asano69/epoche)
 
 <img src="frontend/public/favicon.svg" width="100" align="right" />
 

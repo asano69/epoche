@@ -1,9 +1,9 @@
 .PHONY: lint
 
-include myapp.env
+include epoche.env
 export
 
-BINARY := myapp
+BINARY := epoche
 
 # Ports used by the dev servers (frontend, backend, and PocketBase-style API)
 PORTS := 3000 3001
@@ -14,13 +14,6 @@ all: kill-ports frontend## (*) Build frontend assets and start the server
 	go run ./cmd/$(BINARY) serve
 
 
-init:
-	fastmod --hidden myapp $(notdir $(CURDIR)) --glob '!Makefile'
-	fastmod --hidden MYAPP $(shell echo '$(notdir $(CURDIR))' | tr '[:lower:]' '[:upper:]') --glob '!Makefile'
-	find . -depth \( -type f -o -type d \) -name '*myapp*' | while read -r f; do \
-		mv -- "$$f" "$$(dirname "$$f")/$$(basename "$$f" | sed 's/myapp/$(notdir $(CURDIR))/g')"; \
-	done
-	fastmod myapp $(notdir $(CURDIR))
 
 
 .PHONY: frontend-deps
@@ -48,7 +41,7 @@ kill-ports:
 
 .PHONY: server
 server: kill-ports
-	#./myapp migrate up --dir=pb_data
+	#./epoche migrate up --dir=pb_data
 	./$(BINARY) superuser upsert admin@mail.internal password --dir=pb_data
 	./$(BINARY) serve --dev
 
@@ -84,5 +77,5 @@ format:
 # 本番では、後方互換性のために残しておいたほうが良いかも。
 migrate-collections:
 	ls -1 migrations/*.go | sort | head -n -1 | xargs rm -f
-	yes | go run ./cmd/myapp migrate collections
+	yes | go run ./cmd/epoche migrate collections
 	ls -1 migrations/*.go | sort | head -n -1 | xargs rm -f

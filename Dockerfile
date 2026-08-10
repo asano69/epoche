@@ -32,13 +32,13 @@ COPY internal/ ./internal/
 COPY migrations/ ./migrations/
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o myapp ./cmd/myapp
+    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o epoche ./cmd/epoche
 
 # ==========================================
 # Stage 2: Runtime
 # ==========================================
 FROM alpine:3.23
-WORKDIR /myapp
+WORKDIR /epoche
 
 RUN apk add --no-cache \
     ca-certificates \
@@ -49,13 +49,13 @@ RUN apk add --no-cache \
     curl \
     sqlite
  
-RUN addgroup -g 1000 myapp && \
-    adduser -D -u 1000 -G myapp myapp
+RUN addgroup -g 1000 epoche && \
+    adduser -D -u 1000 -G epoche epoche
 
-COPY --from=go-builder /build/myapp /usr/local/bin/myapp
+COPY --from=go-builder /build/epoche /usr/local/bin/epoche
 
-RUN mkdir -p /certs /myapp/data
-RUN chown -R myapp:myapp /myapp
+RUN mkdir -p /certs /epoche/data
+RUN chown -R epoche:epoche /epoche
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
@@ -63,5 +63,5 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 EXPOSE 3000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["myapp", "serve", "--dir=data"]
+CMD ["epoche", "serve", "--dir=data"]
 

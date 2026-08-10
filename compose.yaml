@@ -1,25 +1,25 @@
 services:
-  myapp:
-    image: ghcr.io/asano69/myapp:latest
-    container_name: myapp
+  epoche:
+    image: ghcr.io/asano69/epoche:latest
+    container_name: epoche
     restart: unless-stopped
     ports:
       - "3000:3000"
     env_file:
-      - myapp.env
+      - epoche.env
     volumes:
-      - ./data:/myapp/data
+      - ./data:/epoche/data
         #- /etc/ssl/certs/root_ca.crt:/certs/root_ca.crt:ro # optional
     environment:
       - TZ=Etc/UTC
       #
-      - MYAPP_SERVER_HOST=0.0.0.0
-      - MYAPP_SERVER_PORT=3000
+      - EPOCHE_SERVER_HOST=0.0.0.0
+      - EPOCHE_SERVER_PORT=3000
       #networks:
     #  - traefik_net
     #labels:
     #  - traefik.enable=true
-    #  - traefik.http.routers.myapp.rule=Host(`myapp.app.internal`)
+    #  - traefik.http.routers.epoche.rule=Host(`epoche.app.internal`)
 #volumes:
 #  data:
 

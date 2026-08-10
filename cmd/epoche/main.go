@@ -6,14 +6,14 @@ import (
 	"github.com/pocketbase/pocketbase"
 	pbcmd "github.com/pocketbase/pocketbase/cmd"
 
-	_ "github.com/asano69/myapp/migrations"
+	_ "github.com/asano69/epoche/migrations"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 )
 
 func main() {
 	app := pocketbase.NewWithConfig(pocketbase.Config{HideStartBanner: true})
 
-	// Registers "myapp migrate up/down/create/collections/history-sync"
+	// Registers "epoche migrate up/down/create/collections/history-sync"
 	// for manual or CI-driven schema management. Automigrate is off because
 	// the schema is defined purely in Go migration files (internal/migrations),
 	// not edited through the PocketBase dashboard.
@@ -22,8 +22,8 @@ func main() {
 	})
 
 	root := app.RootCmd
-	root.Use = "myapp"
-	root.Short = "myapp"
+	root.Use = "epoche"
+	root.Short = "epoche"
 	root.SilenceUsage = true
 	root.Version = "0.0.1"
 
