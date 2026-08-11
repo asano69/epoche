@@ -23,6 +23,9 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
 # Stage 1: Go Builder
 # ==========================================
 FROM golang:1.26-alpine AS go-builder
+# Injected into internal/version.Version at build time; defaults to "dev"
+# so a plain `docker build` without --build-arg still produces a runnable image.
+ARG VERSION=dev
 WORKDIR /build
 # Copy and download Go dependencies first
 COPY go.mod go.sum* ./
@@ -36,7 +39,7 @@ COPY internal/ ./internal/
 COPY migrations/ ./migrations/
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o epoche ./cmd/epoche
+    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -X github.com/asano69/epoche/internal/version.Version=${VERSION}" -o epoche ./cmd/epoche
 
 # ==========================================
 # Stage 2: Runtime

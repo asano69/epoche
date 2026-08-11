@@ -26,7 +26,7 @@ build-frontend: frontend-deps
 
 .PHONY: build
 build: build-frontend
-	go build -o $(BINARY) ./cmd/$(BINARY)
+	go build -ldflags="-X github.com/asano69/epoche/internal/version.Version=$(VERSION)" -o $(BINARY) ./cmd/$(BINARY)
 
 .PHONY: kill-ports
 kill-ports:

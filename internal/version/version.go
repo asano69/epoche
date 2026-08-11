@@ -3,4 +3,6 @@
 // so the two never drift out of sync.
 package version
 
-const Version = "0.0.1-alpha.1"
+// Version is injected at build time via -ldflags (see Makefile and
+// Dockerfile). Defaults to "dev" for local builds that skip that step.
+var Version = "dev"
