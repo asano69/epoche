@@ -1,4 +1,5 @@
 import EllipsisVertical from "lucide-solid/icons/ellipsis-vertical";
+import LogOut from "lucide-solid/icons/log-out";
 import { DropdownMenu } from "@kobalte/core/dropdown-menu";
 import pb from "../../lib/pb";
 
@@ -22,9 +23,10 @@ export default function UserMenu() {
         <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-border bg-card p-1 shadow-popover outline-none font-sans">
           <DropdownMenu.Item
             onSelect={handleLogout}
-            class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-text outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
+            class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-text outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
           >
-            Logout
+            <LogOut size={16} />
+            Log out
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
