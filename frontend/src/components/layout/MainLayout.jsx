@@ -1,16 +1,21 @@
+import { createSignal } from "solid-js";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
 export default function MainLayout(props) {
+  // Sidebar open/closed state lives here so both Header (the toggle
+  // button) and Sidebar (what actually shows/hides) can share it.
+  const [sidebarOpen, setSidebarOpen] = createSignal(false);
+  const toggleSidebar = () => setSidebarOpen((open) => !open);
+
   return (
     <div class="flex min-h-screen flex-col bg-[var(--color-bg)]">
-      {/* Header with navbar and mobile menu */}
-      <Header />
+      {/* Header with navbar and sidebar toggle */}
+      <Header sidebarOpen={sidebarOpen()} onToggleSidebar={toggleSidebar} />
 
       {/* Main content area */}
       <div class="flex flex-1">
-        {/* Sidebar (desktop only) */}
-        <Sidebar />
+        <Sidebar open={sidebarOpen()} />
 
         {/* Main content */}
         <main class="flex-1 overflow-y-auto">
