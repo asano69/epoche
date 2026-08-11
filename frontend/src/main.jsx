@@ -14,5 +14,5 @@ render(
       </AuthGate>
     </>
   ),
-  document.getElementById("app"),
+  document.getElementById("root"),
 );
