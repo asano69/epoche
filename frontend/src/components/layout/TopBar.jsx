@@ -17,7 +17,7 @@ export default function TopBar(props) {
         <div class="flex items-center gap-3">
           <button
             type="button"
-            onClick={props.onToggleSidebar}
+            onClick={() => props.onToggleSidebar()}
             aria-label="Toggle sidebar"
             aria-expanded={props.sidebarOpen}
           >

@@ -26,38 +26,39 @@ export default function Logo(props) {
   // Scales with the icon: at the old default size (40px), this works
   // out to 24px, matching the previous fixed "text-2xl" class.
   const titleFontSize = () => size() * 0.6;
-  const title = props.showTitle && (
-    <div
-      class="logo font-serif"
-      style={{ "font-size": `${titleFontSize()}px` }}
-    >
-      {__APP_NAME__}
-    </div>
-  );
+  const title = () =>
+    props.showTitle && (
+      <div
+        class="logo font-serif"
+        style={{ "font-size": `${titleFontSize()}px` }}
+      >
+        {__APP_NAME__}
+      </div>
+    );
   // Wraps `children` in whatever interactive element this instance
   // needs: a plain button when onClick is given (takes priority over
   // linkable), a home link with the original hover effects when
   // linkable, or a plain flex container otherwise (Login's case).
-  const wrap = (children) =>
+  const Wrap = (p) =>
     props.onClick ? (
       <button type="button" onClick={props.onClick} class="contents">
-        {children}
+        {p.children}
       </button>
     ) : props.linkable ? (
       <A
         href="/"
         class="group flex items-center gap-2 transition-opacity hover:opacity-60 hover:scale-[1.02]"
       >
-        {children}
+        {p.children}
       </A>
     ) : (
-      <div class="flex items-center gap-2">{children}</div>
+      <div class="flex items-center gap-2">{p.children}</div>
     );
 
-  return wrap(
-    <>
+  return (
+    <Wrap>
       {icon}
-      {title}
-    </>
+      {title()}
+    </Wrap>
   );
 }

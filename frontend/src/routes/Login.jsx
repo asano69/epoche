@@ -1,6 +1,5 @@
 import { createSignal } from "solid-js";
 
-import { Button } from "@kobalte/core/button";
 import Logo from "../components/Logo";
 
 import pb from "../lib/pb";
