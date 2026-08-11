@@ -28,16 +28,20 @@ export default function TopBar(props) {
           <Logo linkable />
         </div>
 
+    
         <nav class="flex items-center gap-4">
           <DropdownMenu>
-            <DropdownMenu.Trigger aria-label="Open menu">
+            <DropdownMenu.Trigger
+              aria-label="Open menu"
+              class="rounded-md p-1 transition-colors hover:bg-[var(--color-hover-bg)]"
+            >
               <EllipsisVertical size={24} />
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
-              <DropdownMenu.Content class="dropdown-menu__content">
+              <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-[var(--color-border-soft)] bg-[var(--color-card)] p-1 shadow-[0_4px_12px_0_var(--color-shadow)] outline-none">
                 <DropdownMenu.Item
-                  class="dropdown-menu__item"
                   onSelect={handleLogout}
+                  class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-[var(--color-text)] outline-none transition-colors hover:bg-[var(--color-hover-bg)] data-[highlighted]:bg-[var(--color-hover-bg)]"
                 >
                   Log out
                 </DropdownMenu.Item>
@@ -45,7 +49,7 @@ export default function TopBar(props) {
             </DropdownMenu.Portal>
           </DropdownMenu>
         </nav>
-      </div>
+            </div>
     </header>
   );
 }
