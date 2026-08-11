@@ -8,7 +8,7 @@ import UserMenu from "./UserMenu";
 // separate mobile-only menu anymore.
 export default function TopBar(props) {
   return (
-    <header class="sticky top-0 z-40 p-2  border-b border-[var(--color-border-soft)] bg-[var(--color-bg)] shadow-md">
+    <header class="sticky top-0 z-40 p-2  border-b border-[var(--color-line-soft)] bg-[var(--color-background)] shadow-md">
       <div class="flex justify-between px-8">
         <div class="flex items-center gap-3">
           <button

@@ -9,7 +9,7 @@ export default function MainLayout(props) {
   const toggleSidebar = () => setSidebarOpen((open) => !open);
 
   return (
-    <div class="flex min-h-screen flex-col bg-[var(--color-bg)]">
+    <div class="flex min-h-screen flex-col bg-[var(--color-background)]">
       {/* TopBar with logo and sidebar toggle */}
       <TopBar sidebarOpen={sidebarOpen()} onToggleSidebar={toggleSidebar} />
 

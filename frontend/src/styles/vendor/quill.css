@@ -4,11 +4,11 @@
  * rules never leak into other parts of the app. */
 @layer components {
   .notes-editor {
-    @apply rounded-md border border-[var(--color-border-soft)] bg-[var(--color-field)];
+    @apply rounded-md border border-[var(--color-line-soft)] bg-[var(--color-field)];
   }
 
   .notes-editor .ql-toolbar {
-    @apply border-b border-[var(--color-border-soft)] rounded-t-md bg-[var(--color-surface)];
+    @apply border-b border-[var(--color-line-soft)] rounded-t-md bg-[var(--color-surface)];
   }
 
   .notes-editor .ql-container {
@@ -16,7 +16,7 @@
   }
 
   .notes-editor .ql-editor {
-    @apply text-[var(--color-text)];
+    @apply text-[var(--color-foreground)];
     min-height: 400px;
   }
 }

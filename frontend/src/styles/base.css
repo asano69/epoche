@@ -2,8 +2,8 @@
   body {
     @apply h-screen w-screen;
     font-family: var(--font-serif);
-    background: var(--color-bg);
-    color: var(--color-text);
+    background: var(--color-background);
+    color: var(--color-foreground);
   }
 
   strong {
