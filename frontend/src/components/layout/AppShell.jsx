@@ -7,7 +7,7 @@ import NavBar from "../NavBar";
 // router context (e.g. NavBar's <A> links).
 export default function AppShell(props) {
   return (
-    <div class="mx-auto flex  flex-col items-center bg-[var(--color-bg)] px-6 py-12 text-[var(--color-text)]">
+    <div class="mx-auto flex flex-col items-center bg-[var(--color-bg)] px-6 py-0 text-[var(--color-text)]">
       <NavBar />
       {props.children}
     </div>
