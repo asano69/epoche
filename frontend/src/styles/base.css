@@ -1,0 +1,12 @@
+@layer base {
+  body {
+    @apply h-screen w-screen;
+    font-family: var(--font-serif);
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  strong {
+    font-weight: bold;
+  }
+}

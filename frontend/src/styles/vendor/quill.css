@@ -1,0 +1,22 @@
+/* Quill ships its own class names (.ql-toolbar, .ql-editor, ...) that
+ * can't be targeted with @apply on JSX elements, so the overrides live
+ * here instead of components.css. Scoped under .notes-editor so these
+ * rules never leak into other parts of the app. */
+@layer components {
+  .notes-editor {
+    @apply rounded-md border border-[var(--color-border-soft)] bg-[var(--color-field)];
+  }
+
+  .notes-editor .ql-toolbar {
+    @apply border-b border-[var(--color-border-soft)] rounded-t-md bg-[var(--color-surface)];
+  }
+
+  .notes-editor .ql-container {
+    @apply rounded-b-md;
+  }
+
+  .notes-editor .ql-editor {
+    @apply text-[var(--color-text)];
+    min-height: 400px;
+  }
+}
