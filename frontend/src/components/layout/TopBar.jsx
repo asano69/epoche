@@ -13,7 +13,7 @@ export default function TopBar(props) {
 
   return (
     <header class="sticky top-0 z-40 border-b border-[var(--color-border-soft)] bg-[var(--color-bg)] shadow-sm">
-      <div class="flex justify-between  sm:px-6 lg:px-8">
+      <div class="flex justify-between px-8">
         <div class="flex items-center gap-3">
           <button
             type="button"
@@ -21,7 +21,7 @@ export default function TopBar(props) {
             aria-label="Toggle sidebar"
             aria-expanded={props.sidebarOpen}
           >
-            {props.sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            {props.sidebarOpen ? <X size={30} /> : <Menu size={30} />}
           </button>
           <Logo linkable />
         </div>
