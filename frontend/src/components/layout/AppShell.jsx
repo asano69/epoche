@@ -5,9 +5,5 @@ import MainLayout from "./MainLayout";
 // <Router> from outside, since anything AppShell renders needs to live
 // inside the router context (e.g. Logo's <A> links).
 export default function AppShell(props) {
-  return (
-    <MainLayout>
-      {props.children}
-    </MainLayout>
-  );
+  return <MainLayout>{props.children}</MainLayout>;
 }
