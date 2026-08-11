@@ -92,16 +92,11 @@
     min-height: 400px;
   }
 
-  /* Kobalte DropdownMenu, used for the TopBar's overflow menu */
+  /* Kobalte DropdownMenu, applied by the DropdownMenu component
+     (see components/DropdownMenu.jsx) to the TopBar's overflow menu. */
   .dropdown-menu__content {
     @apply min-w-[8rem] rounded-md border border-[var(--color-border-soft)]
          bg-[var(--color-panel)] p-1 shadow-[0_1px_3px_0_var(--color-shadow)];
-    transform-origin: var(--kb-menu-content-transform-origin);
-    animation: contentHide 250ms ease-in forwards;
-  }
-
-  .dropdown-menu__content[data-expanded] {
-    animation: contentShow 250ms ease-out;
   }
 
   .dropdown-menu__item {
@@ -109,6 +104,14 @@
          outline-none
          data-[highlighted]:bg-[var(--color-hover-bg)];
   }
+}
+
+.dropdown-menu__content {
+  transform-origin: var(--kb-menu-content-transform-origin);
+  animation: contentHide 250ms ease-in forwards;
+}
+.dropdown-menu__content[data-expanded] {
+  animation: contentShow 250ms ease-out;
 }
 
 @keyframes contentShow {
