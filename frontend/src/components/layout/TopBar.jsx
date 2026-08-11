@@ -38,12 +38,12 @@ export default function TopBar(props) {
               <EllipsisVertical size={24} />
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
-              <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-[var(--color-border-soft)] bg-[var(--color-card)] p-1 shadow-[0_4px_12px_0_var(--color-shadow)] outline-none">
+              <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-[var(--color-border-soft)] bg-[var(--color-card)] p-1 shadow-[0_4px_12px_0_var(--color-shadow)] outline-none font-sans">
                 <DropdownMenu.Item
                   onSelect={handleLogout}
                   class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-[var(--color-text)] outline-none transition-colors hover:bg-[var(--color-hover-bg)] data-[highlighted]:bg-[var(--color-hover-bg)]"
                 >
-                  Log out
+                  Logout
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
