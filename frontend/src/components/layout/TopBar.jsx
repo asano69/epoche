@@ -1,5 +1,7 @@
 import Menu from "lucide-solid/icons/menu";
 import X from "lucide-solid/icons/x";
+import EllipsisVertical from "lucide-solid/icons/ellipsis-vertical";
+import { DropdownMenu } from "@kobalte/core/dropdown-menu";
 import Logo from "../Logo";
 import pb from "../../lib/pb";
 
@@ -27,9 +29,21 @@ export default function TopBar(props) {
         </div>
 
         <nav class="flex items-center gap-4">
-          <button type="button" class="btn" onClick={handleLogout}>
-            Log out
-          </button>
+          <DropdownMenu>
+            <DropdownMenu.Trigger aria-label="Open menu">
+              <EllipsisVertical size={24} />
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content class="dropdown-menu__content">
+                <DropdownMenu.Item
+                  class="dropdown-menu__item"
+                  onSelect={handleLogout}
+                >
+                  Log out
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu>
         </nav>
       </div>
     </header>

@@ -91,4 +91,44 @@
     @apply text-[var(--color-text)];
     min-height: 400px;
   }
+
+  /* Kobalte DropdownMenu, used for the TopBar's overflow menu */
+  .dropdown-menu__content {
+    @apply min-w-[8rem] rounded-md border border-[var(--color-border-soft)]
+         bg-[var(--color-panel)] p-1 shadow-[0_1px_3px_0_var(--color-shadow)];
+    transform-origin: var(--kb-menu-content-transform-origin);
+    animation: contentHide 250ms ease-in forwards;
+  }
+
+  .dropdown-menu__content[data-expanded] {
+    animation: contentShow 250ms ease-out;
+  }
+
+  .dropdown-menu__item {
+    @apply cursor-pointer rounded-sm px-3 py-1.5 text-sm text-[var(--color-text)]
+         outline-none
+         data-[highlighted]:bg-[var(--color-hover-bg)];
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes contentHide {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
 }
