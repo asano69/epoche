@@ -2,7 +2,7 @@ import { A } from "@solidjs/router";
 
 // size: overall pixel size of the icon (width == height). Defaults to
 // 40px (the old fixed "h-10 w-10" Tailwind size).
-// showTitle: whether to render "epoche" next to the icon.
+// showTitle: whether to render "App Title" next to the icon.
 // linkable: whether clicking the logo navigates home ("/"). Defaults to
 // false, since Login renders pre-auth where there's nowhere to navigate
 // to yet -- it uses Logo without linkable and gets plain text/icon.
