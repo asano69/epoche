@@ -63,7 +63,7 @@ dev-back: clean
 .PHONY: test
 test:
 	#cd frontend && pnpm test
-	go test ./...
+	go test -race ./...
 
 lint:
 	golangci-lint run
