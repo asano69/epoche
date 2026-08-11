@@ -15,9 +15,6 @@ type ServerConfig struct {
 }
 
 type Config struct {
-	// Name is the application's display name (CLI Use/Short, etc.). It
-	// has no effect on server behavior.
-	Name   string
 	Server ServerConfig
 }
 
@@ -26,7 +23,6 @@ type Config struct {
 //
 // Recognised variables:
 //
-//	APP_NAME                   default "epoche"
 //	EPOCHE_SERVER_HOST         default "0.0.0.0"
 //	EPOCHE_SERVER_PORT         default 3000
 func Load() (*Config, error) {
@@ -36,7 +32,6 @@ func Load() (*Config, error) {
 	}
 
 	cfg := &Config{
-		Name: envString("APP_NAME", "epoche"),
 		Server: ServerConfig{
 			Host: envString("EPOCHE_SERVER_HOST", "0.0.0.0"),
 			Port: port,
