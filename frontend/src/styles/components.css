@@ -4,9 +4,9 @@
          font-sans text-base font-semibold
          transition-colors transition-shadow duration-150
          disabled:cursor-not-allowed disabled:opacity-40
-         shadow-[0_1px_3px_0_var(--color-shade)]
-         border border-[var(--color-line-soft)] bg-[var(--color-field)] text-[var(--color-foreground)]
-         enabled:hover:bg-[var(--color-hover)] enabled:hover:border-[var(--color-hover-line)]
-         enabled:active:bg-[var(--color-active)] enabled:active:border-[var(--color-active-line)];
+         shadow-card
+         border border-border-soft bg-field text-text
+         enabled:hover:bg-hover-bg enabled:hover:border-hover-border
+         enabled:active:bg-active-bg enabled:active:border-active-border;
   }
 }

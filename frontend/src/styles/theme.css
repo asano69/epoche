@@ -1,49 +1,45 @@
 /* Semantic color tokens live in @theme so Tailwind generates matching
- * utilities (bg-bg, text-text, border-border, ...). Default values here
- * are the light theme; the dark-mode override below reassigns the same
- * variable names, so components can keep referencing var(--color-*)
+ * utilities (bg-bg, text-text, border-border-soft, ...). Default values
+ * here are the light theme; the dark-mode override below reassigns the
+ * same variable names, so components can keep referencing var(--color-*)
  * once instead of pairing every utility with a dark: variant. */
 @theme {
   --font-sans: system-ui, "Inter", -apple-system, sans-serif;
   --font-serif: "TeX Gyre Termes", "Nimbus Roman No9 L", Georgia, serif;
-  --font-mono: "Menlo", "Consolas", "Monaco", "Courier New", monospace;
 
-  --color-background: #ffffff;
-  --color-foreground: #000000;
-  --color-topbar: #f8f8f8;
+  --color-bg: #ffffff;
+  --color-text: #000000;
   --color-panel: #f8f8f8;
   --color-surface: #fcfcfc;
   --color-card: #ffffff;
   --color-field: #ffffff;
-  --color-line: #000000;
-  --color-line-soft: #999999;
-  --color-hover: #f0f0f0;
-  --color-hover-line: #777777;
-  --color-active: #e4e4e4;
-  --color-active-line: #666666;
-  --color-shade: #cccccc;
-  /* ---custom ---*/
-  --color-progress: palegreen;
-  --color-muted: #e5e5e5;
+  --color-border-soft: #999999;
+  --color-hover-bg: #f0f0f0;
+  --color-hover-border: #777777;
+  --color-active-bg: #e4e4e4;
+  --color-active-border: #666666;
+  --color-shadow: #cccccc;
+
+  /* Reusable box-shadow presets, so the offset/blur values aren't
+   * duplicated as arbitrary values wherever a card or popover needs
+   * elevation. */
+  --shadow-card: 0 1px 3px 0 var(--color-shadow);
+  --shadow-popover: 0 4px 12px 0 var(--color-shadow);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: #1a1a1a;
-    --color-foreground: #e0e0e0;
+    --color-bg: #1a1a1a;
+    --color-text: #e0e0e0;
     --color-panel: #252525;
     --color-surface: #1e1e1e;
     --color-card: #2a2a2a;
     --color-field: #333333;
-    --color-line: #444444;
-    --color-line-soft: #555555;
-    --color-hover: #3a3a3a;
-    --color-hover-line: #666666;
-    --color-active: #444444;
-    --color-active-line: #777777;
-    --color-shade: #111111;
-    /* ---custom ---*/
-    --color-progress: #2a6e2a;
-    --color-muted: #202020;
+    --color-border-soft: #555555;
+    --color-hover-bg: #3a3a3a;
+    --color-hover-border: #666666;
+    --color-active-bg: #444444;
+    --color-active-border: #777777;
+    --color-shadow: #111111;
   }
 }

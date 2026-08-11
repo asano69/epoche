@@ -14,15 +14,15 @@ export default function UserMenu() {
     <DropdownMenu>
       <DropdownMenu.Trigger
         aria-label="Open menu"
-        class="rounded-md p-1 transition-colors hover:bg-[var(--color-hover)]"
+        class="rounded-md p-1 transition-colors hover:bg-hover-bg"
       >
         <EllipsisVertical size={24} />
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-[var(--color-line-soft)] bg-[var(--color-card)] p-1 shadow-[0_4px_12px_0_var(--color-shade)] outline-none font-sans">
+        <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-border-soft bg-card p-1 shadow-popover outline-none font-sans">
           <DropdownMenu.Item
             onSelect={handleLogout}
-            class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-[var(--color-foreground)] outline-none transition-colors hover:bg-[var(--color-hover)] data-[highlighted]:bg-[var(--color-hover)]"
+            class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-text outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
           >
             Logout
           </DropdownMenu.Item>

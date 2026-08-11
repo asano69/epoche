@@ -1,9 +1,6 @@
 @layer base {
   body {
-    @apply h-screen w-screen;
-    font-family: var(--font-serif);
-    background: var(--color-background);
-    color: var(--color-foreground);
+    @apply h-screen w-screen font-serif bg-bg text-text;
   }
 
   strong {

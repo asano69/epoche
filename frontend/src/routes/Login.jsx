@@ -30,10 +30,10 @@ export default function Login() {
   };
 
   return (
-    <div class="flex min-h-screen w-full items-center justify-center bg-[var(--color-background)] px-6 text-[var(--color-foreground)]">
+    <div class="flex min-h-screen w-full items-center justify-center bg-bg px-6 text-text">
       <form
         onSubmit={handleSubmit}
-        class="flex w-full max-w-sm flex-col gap-4 rounded-md border border-[var(--color-line-soft)] bg-[var(--color-field)] p-8 shadow-[0_1px_3px_0_var(--color-shade)]"
+        class="flex w-full max-w-sm flex-col gap-4 rounded-md border border-border-soft bg-field p-8 shadow-card"
       >
         <div class="flex justify-center">
           <Logo size={32} showTitle />
@@ -45,7 +45,7 @@ export default function Login() {
           onInput={(e) => setEmail(e.target.value)}
           required
           autofocus
-          class="rounded-md border border-[var(--color-line-soft)] bg-[var(--color-background)] px-3 py-2 text-[var(--color-foreground)]"
+          class="rounded-md border border-border-soft bg-bg px-3 py-2 text-text"
         />
         <input
           type="password"
