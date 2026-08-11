@@ -4,6 +4,10 @@
 # Stage 0: Node (vendor frontend assets via npm)
 # ==========================================
 FROM node:22-alpine AS node-builder
+# Passed through to vite.config.js's `define` at build time; defaults to
+# "epoche" to match the Go backend's default (see internal/config).
+ARG APP_NAME=epoche
+ENV APP_NAME=${APP_NAME}
 WORKDIR /build/frontend
 # Copy only dependency manifests first to leverage Docker layer caching
 COPY frontend/package.json frontend/pnpm-lock.yaml* frontend/pnpm-workspace.yaml* ./

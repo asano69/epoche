@@ -31,7 +31,7 @@ export default function Logo(props) {
       class="logo font-serif"
       style={{ "font-size": `${titleFontSize()}px` }}
     >
-      epoche
+      {__APP_NAME__}
     </div>
   );
   // Wraps `children` in whatever interactive element this instance

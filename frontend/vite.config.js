@@ -5,6 +5,13 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [solid(), tailwindcss()],
+  // __APP_NAME__ is a build-time constant (not a runtime env var), so it
+  // can be referenced anywhere in src/ without an import. Backed by the
+  // same APP_NAME the Go backend reads, so both sides agree without
+  // duplicating the value.
+  define: {
+    __APP_NAME__: JSON.stringify(process.env.APP_NAME ?? "epoche"),
+  },
   server: {
     host: "0.0.0.0",
     port: 3001,

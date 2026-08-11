@@ -10,7 +10,12 @@ export default [
   {
     files: ["src/**/*.{js,jsx}"],
     languageOptions: {
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        // Injected by vite.config.js's `define`; a build-time string
+        // replacement, not a real runtime global.
+        __APP_NAME__: "readonly",
+      },
       parserOptions: {
         ecmaFeatures: { jsx: true },
       },
