@@ -15,6 +15,9 @@ import (
 // definitions in this file while serve.go stays focused on server setup
 // and startup.
 func registerRoutes(e *core.ServeEvent) error {
+	// Public routes: no auth required. Keep this list limited to
+	// endpoints that return no user data (version info, health checks,
+	// the static SPA shell below).
 	e.Router.GET("/api/version", func(re *core.RequestEvent) error {
 		return re.JSON(http.StatusOK, map[string]string{"version": version.Version})
 	})
@@ -22,6 +25,13 @@ func registerRoutes(e *core.ServeEvent) error {
 	e.Router.GET("/health", func(re *core.RequestEvent) error {
 		return re.JSON(http.StatusOK, map[string]string{"status": "ok"})
 	})
+
+	// Custom API routes that return or mutate user data go under this
+	// group so RequireSuperuserAuth only has to be declared once here,
+	// instead of on every individual route.
+	admin := e.Router.Group("/api/admin")
+	admin.Bind(apis.RequireSuperuserAuth())
+	// e.g. admin.POST("/jobs/rescan", rescanHandler)
 
 	// Serves the whole Vite build output (index.html, hashed JS/CSS
 	// under assets/, and public/ files like favicon.svg copied to the
