@@ -1,15 +1,13 @@
-import NavBar from "../NavBar";
+import MainLayout from "./MainLayout";
 
-// Wraps every route so NavBar renders once regardless of page (it's
-// global chrome, not something that should vary per route). Passed as
-// Router's `root` prop (see lib/router.jsx) instead of wrapping <Router>
-// from outside, since anything AppShell renders needs to live inside the
-// router context (e.g. NavBar's <A> links).
+// Wraps every route so Header and Sidebar render once regardless of page.
+// Passed as Router's `root` prop (see lib/router.jsx) instead of wrapping
+// <Router> from outside, since anything AppShell renders needs to live
+// inside the router context (e.g. Logo's <A> links).
 export default function AppShell(props) {
   return (
-    <div class="mx-auto flex flex-col items-center bg-[var(--color-bg)] px-6 py-0 text-[var(--color-text)]">
-      <NavBar />
+    <MainLayout>
       {props.children}
-    </div>
+    </MainLayout>
   );
 }

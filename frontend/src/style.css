@@ -66,11 +66,29 @@
   .btn {
     @apply my-1.5 cursor-pointer appearance-none rounded-md px-3 py-[7px]
          font-sans text-base font-semibold
-         transition-colors transition-shadow duration-150 md:mx-3 md:my-0
+         transition-colors transition-shadow duration-150
          disabled:cursor-not-allowed disabled:opacity-40
          shadow-[0_1px_3px_0_var(--color-shadow)]
          border border-[var(--color-border-soft)] bg-[var(--color-field)] text-[var(--color-text)]
          enabled:hover:bg-[var(--color-hover-bg)] enabled:hover:border-[var(--color-hover-border)]
          enabled:active:bg-[var(--color-active-bg)] enabled:active:border-[var(--color-active-border)];
+  }
+
+  /* Quill editor styling to match design tokens */
+  .notes-editor {
+    @apply rounded-md border border-[var(--color-border-soft)] bg-[var(--color-field)];
+  }
+
+  .notes-editor .ql-toolbar {
+    @apply border-b border-[var(--color-border-soft)] rounded-t-md bg-[var(--color-surface)];
+  }
+
+  .notes-editor .ql-container {
+    @apply rounded-b-md;
+  }
+
+  .notes-editor .ql-editor {
+    @apply text-[var(--color-text)];
+    min-height: 400px;
   }
 }

@@ -9,13 +9,16 @@ import logoUrl from "../assets/logo.svg";
 // Shared icon + app name, used by NavBar (post-login, links back to Home)
 // and Login (pre-login, where there's nowhere to navigate to yet, so it
 // renders as plain text/icon instead of a link).
+// Shared icon + app name, used by Header (post-login, links back to Home)
+// and Login (pre-login, where there's nowhere to navigate to yet, so it
+// renders as plain text/icon instead of a link).
 export default function Logo(props) {
   const content = (
     <>
-      <Image class="h-12 w-12">
+      <Image class="h-10 w-10">
         <Image.Img src={logoUrl} alt="" />
       </Image>
-      <div class="logo text-4xl font-serif">epoche</div>
+      <div class="logo text-2xl font-serif">epoche</div>
     </>
   );
 
