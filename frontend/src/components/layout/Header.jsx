@@ -1,5 +1,6 @@
-import { createSignal, Show } from "solid-js";
-import { Menu, X } from "lucide-solid";
+import { createSignal } from "solid-js";
+import Menu from "lucide-solid/icons/menu";
+import X from "lucide-solid/icons/x"
 import Logo from "../Logo";
 import pb from "../../lib/pb";
 
@@ -33,27 +34,29 @@ export default function Header(props) {
           aria-label="Toggle menu"
           aria-expanded={isOpen()}
         >
-          <Show when={!isOpen()} fallback={<X size={24} />}>
-            <Menu size={24} />
-          </Show>
+          {isOpen() ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       {/* Mobile menu drawer */}
-      <Show when={isOpen()}>
-        <nav class="border-t border-[var(--color-border-soft)] bg-[var(--color-panel)] px-4 py-4 md:hidden">
-          <button
-            type="button"
-            class="btn w-full"
-            onClick={() => {
-              handleLogout();
-              closeMenu();
-            }}
-          >
-            Log out
-          </button>
-        </nav>
-      </Show>
+      <nav
+        class="border-t border-[var(--color-border-soft)] bg-[var(--color-panel)] px-4 py-4 md:hidden transition-all duration-200 overflow-hidden"
+        style={{
+          "max-height": isOpen() ? "200px" : "0px",
+          opacity: isOpen() ? 1 : 0,
+        }}
+      >
+        <button
+          type="button"
+          class="btn w-full"
+          onClick={() => {
+            handleLogout();
+            closeMenu();
+          }}
+        >
+          Log out
+        </button>
+      </nav>
     </header>
   );
 }
