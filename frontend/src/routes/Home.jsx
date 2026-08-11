@@ -1,4 +1,4 @@
-// NavBar now renders once in AppShell (see lib/router.jsx), not per route.
+// TopBar and Sidebar now render once in AppShell (see lib/router.jsx), not per route.
 export default function Home() {
   return <div />;
 }

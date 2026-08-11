@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import Header from "./Header";
+import TopBar from "./TopBar";
 import Sidebar from "./Sidebar";
 
 export default function MainLayout(props) {
@@ -10,8 +10,8 @@ export default function MainLayout(props) {
 
   return (
     <div class="flex min-h-screen flex-col bg-[var(--color-bg)]">
-      {/* Header with navbar and sidebar toggle */}
-      <Header sidebarOpen={sidebarOpen()} onToggleSidebar={toggleSidebar} />
+      {/* TopBar with logo and sidebar toggle */}
+      <TopBar sidebarOpen={sidebarOpen()} onToggleSidebar={toggleSidebar} />
 
       {/* Main content area */}
       <div class="flex flex-1">

@@ -6,7 +6,7 @@ import pb from "../../lib/pb";
 // The hamburger button here only toggles the Sidebar (owned by
 // MainLayout, passed in as sidebarOpen/onToggleSidebar). There is no
 // separate mobile-only menu anymore.
-export default function Header(props) {
+export default function TopBar(props) {
   const handleLogout = () => {
     pb.authStore.clear();
   };
