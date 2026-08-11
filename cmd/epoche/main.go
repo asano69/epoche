@@ -6,6 +6,7 @@ import (
 	"github.com/pocketbase/pocketbase"
 	pbcmd "github.com/pocketbase/pocketbase/cmd"
 
+	"github.com/asano69/epoche/internal/version"
 	_ "github.com/asano69/epoche/migrations"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 )
@@ -25,7 +26,7 @@ func main() {
 	root.Use = "epoche"
 	root.Short = "epoche"
 	root.SilenceUsage = true
-	root.Version = "0.0.1"
+	root.Version = version.Version
 
 	root.AddCommand(
 		serveCmd(app),
