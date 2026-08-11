@@ -1,24 +1,27 @@
 /* Semantic color tokens live in @theme so Tailwind generates matching
- * utilities (bg-bg, text-text, border-border-soft, ...). Default values
- * here are the light theme; the dark-mode override below reassigns the
- * same variable names, so components can keep referencing var(--color-*)
- * once instead of pairing every utility with a dark: variant. */
+ * utilities (bg-bg, text-text, border-border-soft, ...). Each token uses
+ * light-dark(), so the light/dark values sit side by side instead of
+ * being duplicated in a separate @media block. Which value applies
+ * follows the `color-scheme` of the element: it defaults to the OS
+ * preference (see the <meta name="color-scheme"> tag in index.html) and
+ * can be pinned explicitly by toggling the .light/.dark class on <html>
+ * (see the :root.light / :root.dark rules below). */
 @theme {
   --font-sans: system-ui, "Inter", -apple-system, sans-serif;
   --font-serif: "TeX Gyre Termes", "Nimbus Roman No9 L", Georgia, serif;
 
-  --color-bg: #ffffff;
-  --color-text: #000000;
-  --color-panel: #f8f8f8;
-  --color-surface: #fcfcfc;
-  --color-card: #ffffff;
-  --color-field: #ffffff;
-  --color-border-soft: #999999;
-  --color-hover-bg: #f0f0f0;
-  --color-hover-border: #777777;
-  --color-active-bg: #e4e4e4;
-  --color-active-border: #666666;
-  --color-shadow: #cccccc;
+  --color-bg: light-dark(#ffffff, #1a1a1a);
+  --color-text: light-dark(#000000, #e0e0e0);
+  --color-panel: light-dark(#f8f8f8, #252525);
+  --color-surface: light-dark(#fcfcfc, #1e1e1e);
+  --color-card: light-dark(#ffffff, #2a2a2a);
+  --color-field: light-dark(#ffffff, #333333);
+  --color-border-soft: light-dark(#999999, #555555);
+  --color-hover-bg: light-dark(#f0f0f0, #3a3a3a);
+  --color-hover-border: light-dark(#777777, #666666);
+  --color-active-bg: light-dark(#e4e4e4, #444444);
+  --color-active-border: light-dark(#666666, #777777);
+  --color-shadow: light-dark(#cccccc, #111111);
 
   /* Reusable box-shadow presets, so the offset/blur values aren't
    * duplicated as arbitrary values wherever a card or popover needs
@@ -27,19 +30,13 @@
   --shadow-popover: 0 4px 12px 0 var(--color-shadow);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #1a1a1a;
-    --color-text: #e0e0e0;
-    --color-panel: #252525;
-    --color-surface: #1e1e1e;
-    --color-card: #2a2a2a;
-    --color-field: #333333;
-    --color-border-soft: #555555;
-    --color-hover-bg: #3a3a3a;
-    --color-hover-border: #666666;
-    --color-active-bg: #444444;
-    --color-active-border: #777777;
-    --color-shadow: #111111;
-  }
+/* An explicit user choice overrides the OS preference by pinning
+ * color-scheme on <html>. With neither class present, color-scheme
+ * falls back to the <meta name="color-scheme"> tag in index.html,
+ * which follows the OS setting. */
+:root.light {
+  color-scheme: light;
+}
+:root.dark {
+  color-scheme: dark;
 }
