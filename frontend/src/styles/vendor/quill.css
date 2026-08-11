@@ -4,11 +4,11 @@
  * rules never leak into other parts of the app. */
 @layer components {
   .notes-editor {
-    @apply rounded-md border border-border-soft bg-field;
+    @apply rounded-md border border-border bg-field;
   }
 
   .notes-editor .ql-toolbar {
-    @apply border-b border-border-soft rounded-t-md bg-surface;
+    @apply border-b border-border rounded-t-md bg-surface;
   }
 
   .notes-editor .ql-container {

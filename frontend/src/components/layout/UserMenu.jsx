@@ -19,7 +19,7 @@ export default function UserMenu() {
         <EllipsisVertical size={24} />
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-border-soft bg-card p-1 shadow-popover outline-none font-sans">
+        <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-border bg-card p-1 shadow-popover outline-none font-sans">
           <DropdownMenu.Item
             onSelect={handleLogout}
             class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-text outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"

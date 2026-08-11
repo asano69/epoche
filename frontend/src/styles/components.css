@@ -5,7 +5,7 @@
          transition-colors transition-shadow duration-150
          disabled:cursor-not-allowed disabled:opacity-40
          shadow-card
-         border border-border-soft bg-field text-text
+         border border-border bg-field text-text
          enabled:hover:bg-hover-bg enabled:hover:border-hover-border
          enabled:active:bg-active-bg enabled:active:border-active-border;
   }
