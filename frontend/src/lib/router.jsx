@@ -1,7 +1,7 @@
-import { Router, Route } from "@solidjs/router";
+import { Router, Route, Navigate } from "@solidjs/router";
 
-import Home from "../routes/Home";
 import AppShell from "../components/layout/AppShell";
+import NoteNew from "../routes/notes/New";
 
 // All top-level routes in one place, so adding or removing a page never
 // requires touching main.jsx.
@@ -12,7 +12,10 @@ import AppShell from "../components/layout/AppShell";
 export default function AppRouter() {
   return (
     <Router root={AppShell}>
-      <Route path="/" component={Home} />
+      {/* Temporary: redirect the root path to the note editor until a
+          proper home/list page exists. */}
+      <Route path="/" component={() => <Navigate href="/notes/new" />} />
+      <Route path="/notes/new" component={NoteNew} />
     </Router>
   );
 }
