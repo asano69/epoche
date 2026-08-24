@@ -13,8 +13,12 @@ import (
 // serveCmd defines the "epoche serve" cobra command. RunE stays a thin
 // wrapper: load config, then delegate to internal/serve for the actual
 // server implementation.
+//
+// --host/--port are optional overrides on top of config.Load()'s env-based
+// config. cmd.Flags().Changed is checked so an unset flag never clobbers a
+// value that came from EPOCHE_SERVER_HOST/EPOCHE_SERVER_PORT.
 func serveCmd(app *pocketbase.PocketBase) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "serve",
 		Short: "Start the web server",
 		Args:  cobra.NoArgs,
@@ -23,7 +27,26 @@ func serveCmd(app *pocketbase.PocketBase) *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("load config: %w", err)
 			}
+
+			if cmd.Flags().Changed("host") {
+				cfg.Server.Host, err = cmd.Flags().GetString("host")
+				if err != nil {
+					return err
+				}
+			}
+			if cmd.Flags().Changed("port") {
+				cfg.Server.Port, err = cmd.Flags().GetInt("port")
+				if err != nil {
+					return err
+				}
+			}
+
 			return serve.Run(app, cfg)
 		},
 	}
+
+	cmd.Flags().String("host", "", "Server host, overrides EPOCHE_SERVER_HOST")
+	cmd.Flags().Int("port", 0, "Server port, overrides EPOCHE_SERVER_PORT")
+
+	return cmd
 }
