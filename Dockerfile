@@ -61,7 +61,7 @@ RUN addgroup -g 1000 epoche && \
 
 COPY --from=go-builder /build/epoche /usr/local/bin/epoche
 
-RUN mkdir -p /certs /epoche/data
+RUN mkdir -p /certs /epoche/pb_data
 RUN chown -R epoche:epoche /epoche
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
@@ -70,5 +70,5 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 EXPOSE 3000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["epoche", "serve", "--dir=data"]
+CMD ["epoche", "serve", "--dir=pb_data"]
 

@@ -11,8 +11,18 @@ import (
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 )
 
+// dataDirEnvVar lets the data directory be set via environment variable
+// instead of always requiring the "--dir" flag. If unset, PocketBase
+// falls back to its own default (a "pb_data" folder next to the binary).
+const dataDirEnvVar = "EPOCHE_DATA_DIR"
+
 func main() {
-	app := pocketbase.NewWithConfig(pocketbase.Config{HideStartBanner: true})
+	app := pocketbase.NewWithConfig(pocketbase.Config{
+		HideStartBanner: true,
+		// Sets the "--dir" flag's default value. An explicit "--dir"
+		// still overrides this, so the flag keeps working as before.
+		DefaultDataDir: os.Getenv(dataDirEnvVar),
+	})
 
 	// Registers "epoche migrate up/down/create/collections/history-sync"
 	// for manual or CI-driven schema management. Automigrate is off because
