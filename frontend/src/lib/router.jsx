@@ -1,6 +1,7 @@
-import { Router, Route, Navigate } from "@solidjs/router";
+import { Router, Route } from "@solidjs/router";
 
 import AppShell from "../components/layout/AppShell";
+import Home from "../routes/Home";
 import NoteEditor from "../routes/notes/Editor";
 import ContextNotes from "../routes/contexts/Notes";
 
@@ -13,13 +14,16 @@ import ContextNotes from "../routes/contexts/Notes";
 export default function AppRouter() {
   return (
     <Router root={AppShell}>
-      {/* Temporary: redirect the root path to the note editor until a
-          proper home/list page exists. */}
-      <Route path="/" component={() => <Navigate href="/notes/new" />} />
-      {/* "/notes/new" must be registered before "/notes/:id" so the
-          literal path wins over the dynamic one. */}
-      <Route path="/notes/new" component={NoteEditor} />
-      <Route path="/notes/:id" component={NoteEditor} />
+      {/* Placeholder until a proper home/context-picker page exists. */}
+      <Route path="/" component={Home} />
+      {/* A note is addressed by its context and date, not by id: this
+          keeps the URL self-descriptive and matches the "one note per
+          context per day" rule enforced by the notes collection's
+          unique index on (context, date). */}
+      <Route
+        path="/context/:contextName/:year/:month/:day"
+        component={NoteEditor}
+      />
       <Route path="/contexts/:contextName" component={ContextNotes} />
     </Router>
   );

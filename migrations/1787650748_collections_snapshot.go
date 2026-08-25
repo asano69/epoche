@@ -913,6 +913,35 @@ func init() {
 						"type": "text"
 					},
 					{
+						"cascadeDelete": true,
+						"collectionId": "pbc_3961493164",
+						"help": "",
+						"hidden": false,
+						"id": "relation3797779838",
+						"maxSelect": 0,
+						"minSelect": 0,
+						"name": "context",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"autogeneratePattern": "",
+						"help": "",
+						"hidden": false,
+						"id": "text2862495610",
+						"max": 0,
+						"min": 0,
+						"name": "date",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": true,
+						"system": false,
+						"type": "text"
+					},
+					{
 						"help": "",
 						"hidden": false,
 						"id": "json3485334036",
@@ -922,20 +951,6 @@ func init() {
 						"required": false,
 						"system": false,
 						"type": "json"
-					},
-					{
-						"cascadeDelete": false,
-						"collectionId": "pbc_3961493164",
-						"help": "",
-						"hidden": false,
-						"id": "relation3797779838",
-						"maxSelect": 0,
-						"minSelect": 0,
-						"name": "context",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "relation"
 					},
 					{
 						"hidden": false,
@@ -1023,9 +1038,7 @@ func init() {
 					}
 				],
 				"id": "pbc_3961493164",
-				"indexes": [
-					"CREATE UNIQUE INDEX ` + "`" + `idx_rsd0522td5` + "`" + ` ON ` + "`" + `contexts` + "`" + ` (` + "`" + `context` + "`" + `)"
-				],
+				"indexes": [],
 				"listRule": null,
 				"name": "contexts",
 				"system": false,

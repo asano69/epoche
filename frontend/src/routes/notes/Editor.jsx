@@ -1,15 +1,6 @@
-import {
-  createSignal,
-  onCleanup,
-  Show,
-  createResource,
-  createEffect,
-  For,
-} from "solid-js";
-import { useParams, useNavigate, useSearchParams } from "@solidjs/router";
+import { createSignal, onCleanup, Show, createResource, For } from "solid-js";
+import { useParams } from "@solidjs/router";
 import { Button } from "@kobalte/core/button";
-import { Combobox } from "@kobalte/core/combobox";
-import ChevronDown from "lucide-solid/icons/chevron-down";
 import Undo2 from "lucide-solid/icons/undo-2";
 import Redo2 from "lucide-solid/icons/redo-2";
 import Bold from "lucide-solid/icons/bold";
@@ -28,35 +19,73 @@ import { createEditor } from "prosekit/core";
 import { ProseKit, useEditorDerivedValue } from "prosekit/solid";
 
 import pb from "../../lib/pb";
+import { formatDisplayDate } from "../../lib/date";
 import Loading from "../../components/Loading";
 
-// Note editor page, used both to create a new note ("/notes/new") and to
-// edit an existing one ("/notes/:id"). The editor's content is stored as
-// a ProseMirror JSON document (Editor#getDocJSON()) in the note's json
-// field, so no HTML conversion is needed on save or load.
+// A note is looked up by its context and date rather than by id (see
+// lib/router.jsx), so this page resolves both from the URL before
+// rendering the form: first the context record (by name), then any
+// existing note for that context/date pair.
 export default function Editor() {
   const params = useParams();
-  // "context" is set when arriving from a context page's new-note
-  // button (see routes/contexts/Notes.jsx), so the combobox below can
-  // be pre-filled with that context.
-  const [searchParams] = useSearchParams();
-  // Only fetches when params.id is set, i.e. when editing an existing
-  // note; createResource simply never runs the fetcher for "/notes/new".
+  const date = () =>
+    `${params.year}-${params.month.padStart(2, "0")}-${params.day.padStart(2, "0")}`;
+
+  const [context] = createResource(() => params.contextName, fetchContext);
   const [note] = createResource(
-    () => params.id,
-    (id) => pb.collection("notes").getOne(id),
+    () => (context() ? [context().id, date()] : undefined),
+    fetchNote,
   );
 
   return (
-    <Show when={!params.id || note()} fallback={<Loading />}>
-      <NoteForm
-        id={params.id}
-        initialContent={note()?.note}
-        initialContextId={note()?.context}
-        initialContextName={searchParams.context}
-      />
+    <Show when={!context.loading} fallback={<Loading />}>
+      <Show
+        when={context()}
+        fallback={
+          <p class="text-sm text-[#dc3545]">
+            Unknown context: {params.contextName}
+          </p>
+        }
+      >
+        <Show when={!note.loading} fallback={<Loading />}>
+          <NoteForm
+            contextId={context().id}
+            date={date()}
+            noteId={note()?.id}
+            initialContent={note()?.note}
+          />
+        </Show>
+      </Show>
     </Show>
   );
+}
+
+async function fetchContext(name) {
+  try {
+    return await pb
+      .collection("contexts")
+      .getFirstListItem(pb.filter("context = {:name}", { name }));
+  } catch {
+    // No context with this name yet; Editor shows the "unknown context"
+    // message instead of the form.
+    return null;
+  }
+}
+
+async function fetchNote([contextId, date]) {
+  try {
+    return await pb
+      .collection("notes")
+      .getFirstListItem(
+        pb.filter("context = {:contextId} && date = {:date}", {
+          contextId,
+          date,
+        }),
+      );
+  } catch {
+    // No note for this context/date yet; Editor starts a blank one.
+    return null;
+  }
 }
 
 // Toolbar buttons, grouped by function (history / marks / block type /
@@ -193,42 +222,12 @@ function Toolbar() {
 // the form is (re)inserted, e.g. once an existing note's data has
 // finished loading.
 function NoteForm(props) {
-  const navigate = useNavigate();
-
-  // Full candidate list, fetched once; the combobox below narrows this
-  // down as the user types (see handleContextInputChange).
-  const [allContexts] = createResource(() =>
-    pb.collection("contexts").getFullList({ sort: "context" }),
-  );
-  const [contextOptions, setContextOptions] = createSignal([]);
-  const [selectedContext, setSelectedContext] = createSignal(null);
-
-  // Once contexts have loaded, populate the dropdown and preselect a
-  // context: by id when editing an existing note, or by name when
-  // arriving from a context page's new-note button.
-  createEffect(() => {
-    const list = allContexts();
-    if (!list) return;
-    const options = list.map((c) => ({ value: c.id, label: c.context }));
-    setContextOptions(options);
-    if (props.initialContextId) {
-      const match = options.find((o) => o.value === props.initialContextId);
-      if (match) setSelectedContext(match);
-    } else if (props.initialContextName) {
-      const match = options.find((o) => o.label === props.initialContextName);
-      if (match) setSelectedContext(match);
-    }
-  });
-
-  // Narrows the dropdown to contexts whose label contains the typed text.
-  const handleContextInputChange = (value) => {
-    const list = allContexts() ?? [];
-    setContextOptions(
-      list
-        .filter((c) => c.context.toLowerCase().includes(value.toLowerCase()))
-        .map((c) => ({ value: c.id, label: c.context })),
-    );
-  };
+  // Tracks the note's id locally: unset until the first save, at which
+  // point it switches from create to update for any further save on
+  // this same context/date without needing a page reload.
+  const [noteId, setNoteId] = createSignal(props.noteId);
+  const [saving, setSaving] = createSignal(false);
+  const [error, setError] = createSignal("");
 
   const editor = createEditor({
     extension: defineBasicExtension(),
@@ -243,9 +242,6 @@ function NoteForm(props) {
     onCleanup(() => unmount?.());
   };
 
-  const [saving, setSaving] = createSignal(false);
-  const [error, setError] = createSignal("");
-
   const handleSave = async (e) => {
     e.preventDefault();
     setError("");
@@ -253,16 +249,14 @@ function NoteForm(props) {
     try {
       const data = {
         note: editor.getDocJSON(),
-        context: selectedContext()?.value ?? "",
+        context: props.contextId,
+        date: props.date,
       };
-      if (props.id) {
-        await pb.collection("notes").update(props.id, data);
+      if (noteId()) {
+        await pb.collection("notes").update(noteId(), data);
       } else {
         const record = await pb.collection("notes").create(data);
-        // Switch to the new note's edit URL so further saves update it
-        // instead of creating duplicates.
-        navigate(`/notes/${record.id}`);
-        return;
+        setNoteId(record.id);
       }
     } catch {
       setError("Failed to save the note.");
@@ -273,43 +267,7 @@ function NoteForm(props) {
 
   return (
     <form onSubmit={handleSave} class="flex w-full flex-col gap-4">
-      <Combobox
-        options={contextOptions()}
-        optionValue="value"
-        optionLabel="label"
-        optionTextValue="label"
-        value={selectedContext()}
-        onChange={setSelectedContext}
-        onInputChange={handleContextInputChange}
-        placeholder="Context (optional)"
-        itemComponent={(itemProps) => (
-          <Combobox.Item
-            item={itemProps.item}
-            class="flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm text-text outline-none data-[highlighted]:bg-hover-bg"
-          >
-            <Combobox.ItemLabel>
-              {itemProps.item.rawValue.label}
-            </Combobox.ItemLabel>
-          </Combobox.Item>
-        )}
-      >
-        <Combobox.Control
-          aria-label="Context"
-          class="flex w-[200px] items-center gap-2 rounded-md border border-border bg-field px-3 py-2"
-        >
-          <Combobox.Input class="w-0 flex-1 bg-transparent text-text outline-none" />
-          <Combobox.Trigger class="-m-2 flex cursor-pointer items-center p-2 text-text">
-            <Combobox.Icon>
-              <ChevronDown size={16} />
-            </Combobox.Icon>
-          </Combobox.Trigger>
-        </Combobox.Control>
-        <Combobox.Portal>
-          <Combobox.Content class="z-50 rounded-md border border-border bg-card p-1 shadow-popover">
-            <Combobox.Listbox />
-          </Combobox.Content>
-        </Combobox.Portal>
-      </Combobox>
+      <h1 class="font-serif text-2xl">{formatDisplayDate(props.date)}</h1>
       <ProseKit editor={editor}>
         <div class="notes-editor">
           <Toolbar />

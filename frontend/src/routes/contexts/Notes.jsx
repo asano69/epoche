@@ -8,9 +8,27 @@ import { defineBasicExtension } from "prosekit/basic";
 import { defineReadonly } from "prosekit/extensions/readonly";
 
 import pb from "../../lib/pb";
+import { formatDisplayDate } from "../../lib/date";
 import Loading from "../../components/Loading";
 
 const PAGE_SIZE = 20;
+
+// Builds the "/context/:contextName/:year/:month/:day" path for a note,
+// splitting its "date" field (stored as "YYYY-MM-DD") into segments.
+function notePath(contextName, date) {
+  const [year, month, day] = date.split("-");
+  return `/context/${encodeURIComponent(contextName)}/${year}/${month}/${day}`;
+}
+
+// Today's date as "YYYY-MM-DD". Each context can only have one note per
+// day, so the "New note" button always points at today's note, whether
+// it already exists or not.
+function todayDate() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${now.getFullYear()}-${month}-${day}`;
+}
 
 // ProseMirror schemas require a doc to contain at least one block node,
 // so an empty/null "note" field (e.g. a note that was created but never
@@ -79,7 +97,7 @@ export default function ContextNotes() {
         filter: pb.filter("context.context = {:name}", {
           name: contextName(),
         }),
-        sort: "-created",
+        sort: "-date",
       });
       setNotes((prev) =>
         pageNum === 1 ? result.items : [...prev, ...result.items],
@@ -129,7 +147,7 @@ export default function ContextNotes() {
           the "context" query param (see Editor.jsx). */}
       <div class="flex justify-end">
         <A
-          href={`/notes/new?context=${encodeURIComponent(contextName())}`}
+          href={notePath(contextName(), todayDate())}
           aria-label="New note"
           class="rounded-md p-1 transition-colors hover:bg-hover-bg"
         >
@@ -148,11 +166,11 @@ export default function ContextNotes() {
         <For each={notes()}>
           {(note) => (
             <A
-              href={`/notes/${note.id}`}
+              href={notePath(contextName(), note.date)}
               class="flex flex-col gap-2 py-4 transition-colors hover:bg-hover-bg"
             >
               <span class="text-xl font-serif">
-                {new Date(note.created).toLocaleString()}
+                {formatDisplayDate(note.date)}
               </span>
               <NoteContent note={note} />
             </A>
