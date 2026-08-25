@@ -995,7 +995,7 @@ func init() {
 						"min": 0,
 						"name": "context",
 						"pattern": "",
-						"presentable": false,
+						"presentable": true,
 						"primaryKey": false,
 						"required": false,
 						"system": false,
@@ -1023,7 +1023,9 @@ func init() {
 					}
 				],
 				"id": "pbc_3961493164",
-				"indexes": [],
+				"indexes": [
+					"CREATE UNIQUE INDEX ` + "`" + `idx_rsd0522td5` + "`" + ` ON ` + "`" + `contexts` + "`" + ` (` + "`" + `context` + "`" + `)"
+				],
 				"listRule": null,
 				"name": "contexts",
 				"system": false,

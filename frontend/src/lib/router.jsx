@@ -2,6 +2,7 @@ import { Router, Route, Navigate } from "@solidjs/router";
 
 import AppShell from "../components/layout/AppShell";
 import NoteEditor from "../routes/notes/Editor";
+import ContextNotes from "../routes/contexts/Notes";
 
 // All top-level routes in one place, so adding or removing a page never
 // requires touching main.jsx.
@@ -19,6 +20,7 @@ export default function AppRouter() {
           literal path wins over the dynamic one. */}
       <Route path="/notes/new" component={NoteEditor} />
       <Route path="/notes/:id" component={NoteEditor} />
+      <Route path="/contexts/:contextName" component={ContextNotes} />
     </Router>
   );
 }
