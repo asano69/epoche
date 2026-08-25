@@ -8,11 +8,10 @@ import {
   Show,
 } from "solid-js";
 import { useParams, useNavigate, A } from "@solidjs/router";
-import { DropdownMenu } from "@kobalte/core/dropdown-menu";
 import Plus from "lucide-solid/icons/plus";
-import Ellipsis from "lucide-solid/icons/ellipsis";
 import Pencil from "lucide-solid/icons/pencil";
 import Trash2 from "lucide-solid/icons/trash-2";
+import ActionsMenu from "../../components/menus/ActionsMenu";
 import "prosekit/basic/style.css";
 import "prosekit/basic/typography.css";
 import { createEditor, union } from "prosekit/core";
@@ -27,19 +26,12 @@ import {
   deleteContext,
 } from "../../lib/contexts";
 import { formatDisplayDate } from "../../lib/date";
+import { notePath } from "../../lib/notePath";
 import Loading from "../../components/Loading";
 import PromptDialog from "../../components/dialogs/PromptDialog";
 import ConfirmDialog from "../../components/dialogs/ConfirmDialog";
 
 const PAGE_SIZE = 20;
-
-// Builds the "/contexts/:contextName/:year/:month/:day" path for a
-// note, splitting its "date" field (stored as "YYYY-MM-DD") into
-// segments.
-function notePath(contextName, date) {
-  const [year, month, day] = date.split("-");
-  return `/contexts/${encodeURIComponent(contextName)}/${year}/${month}/${day}`;
-}
 
 // Today's date as "YYYY-MM-DD". Each context can only have one note per
 // day, so the "New note" button always points at today's note, whether
@@ -224,32 +216,18 @@ export default function ContextNotes() {
               (not pushed to the far right) via gap-2 above instead of
               justify-between. */}
           <Show when={context()}>
-            <DropdownMenu>
-              <DropdownMenu.Trigger
-                aria-label="Context actions"
-                class="icon-btn"
-              >
-                <Ellipsis size={24} />
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Portal>
-                <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-border bg-card p-1 shadow-popover outline-none font-sans">
-                  <DropdownMenu.Item
-                    onSelect={() => setEditOpen(true)}
-                    class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-text outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
-                  >
-                    <Pencil size={16} />
-                    Edit
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    onSelect={() => setDeleteOpen(true)}
-                    class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-[#dc3545] outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
-                  >
-                    <Trash2 size={16} />
-                    Delete
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Portal>
-            </DropdownMenu>
+            <ActionsMenu
+              label="Context actions"
+              items={[
+                { label: "Edit", icon: Pencil, onSelect: () => setEditOpen(true) },
+                {
+                  label: "Delete",
+                  icon: Trash2,
+                  onSelect: () => setDeleteOpen(true),
+                  destructive: true,
+                },
+              ]}
+            />
           </Show>
         </div>
 

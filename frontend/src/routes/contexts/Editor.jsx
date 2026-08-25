@@ -1,8 +1,10 @@
 import { createSignal, onCleanup, Show, createResource, For } from "solid-js";
-import { useParams, A } from "@solidjs/router";
-import { contextByName, contextsLoaded } from "../../lib/contexts";
+import { useParams, useNavigate, A } from "@solidjs/router";
+import { contextByName, contexts, contextsLoaded } from "../../lib/contexts";
 import { Button } from "@kobalte/core/button";
 import ArrowLeft from "lucide-solid/icons/arrow-left";
+import ArrowRightLeft from "lucide-solid/icons/arrow-right-left";
+import Trash2 from "lucide-solid/icons/trash-2";
 import Undo2 from "lucide-solid/icons/undo-2";
 import Redo2 from "lucide-solid/icons/redo-2";
 import Bold from "lucide-solid/icons/bold";
@@ -22,7 +24,11 @@ import { ProseKit, useEditorDerivedValue } from "prosekit/solid";
 
 import pb from "../../lib/pb";
 import { formatDisplayDate } from "../../lib/date";
+import { notePath } from "../../lib/notePath";
 import Loading from "../../components/Loading";
+import ActionsMenu from "../../components/menus/ActionsMenu";
+import ComboboxDialog from "../../components/dialogs/ComboboxDialog";
+import ConfirmDialog from "../../components/dialogs/ConfirmDialog";
 
 // A note is looked up by its context and date rather than by id (see
 // lib/router.jsx), so this page resolves both from the URL before
@@ -216,12 +222,20 @@ function Toolbar() {
 // the form is (re)inserted, e.g. once an existing note's data has
 // finished loading.
 function NoteForm(props) {
+  const navigate = useNavigate();
+
   // Tracks the note's id locally: unset until the first save, at which
   // point it switches from create to update for any further save on
   // this same context/date without needing a page reload.
   const [noteId, setNoteId] = createSignal(props.noteId);
   const [saving, setSaving] = createSignal(false);
   const [error, setError] = createSignal("");
+  const [moveOpen, setMoveOpen] = createSignal(false);
+  const [deleteOpen, setDeleteOpen] = createSignal(false);
+
+  // Every context except the one this note is currently in, i.e. the
+  // valid destinations for "Move context".
+  const moveTargets = () => contexts().filter((c) => c.id !== props.contextId);
 
   const editor = createEditor({
     extension: defineBasicExtension(),
@@ -259,6 +273,18 @@ function NoteForm(props) {
     }
   };
 
+  // Re-points this note at a different context, then follows it to the
+  // note's new URL (same date, new context name).
+  const handleMoveContext = async (target) => {
+    await pb.collection("notes").update(noteId(), { context: target.id });
+    navigate(notePath(target.context, props.date));
+  };
+
+  const handleDeleteNote = async () => {
+    await pb.collection("notes").delete(noteId());
+    navigate(`/contexts/${encodeURIComponent(props.contextName)}`);
+  };
+
   return (
     <form onSubmit={handleSave} class="flex w-full flex-col gap-4">
       <div class="flex items-center gap-3">
@@ -271,6 +297,25 @@ function NoteForm(props) {
           <ArrowLeft size={24} />
         </A>
         <h1 class="font-serif text-3xl">{formatDisplayDate(props.date)}</h1>
+        {/* Move/delete only make sense for a note that already exists. */}
+        <Show when={noteId()}>
+          <ActionsMenu
+            label="Note actions"
+            items={[
+              {
+                label: "Move context",
+                icon: ArrowRightLeft,
+                onSelect: () => setMoveOpen(true),
+              },
+              {
+                label: "Delete",
+                icon: Trash2,
+                onSelect: () => setDeleteOpen(true),
+                destructive: true,
+              },
+            ]}
+          />
+        </Show>
       </div>
       <ProseKit editor={editor}>
         <div class="notes-editor">
@@ -282,6 +327,30 @@ function NoteForm(props) {
       <Button type="submit" class="btn" disabled={saving()}>
         {saving() ? "Saving…" : "Save"}
       </Button>
+      <Show when={noteId()}>
+        <ComboboxDialog
+          open={moveOpen()}
+          onOpenChange={setMoveOpen}
+          title="Move context"
+          label="Context"
+          options={moveTargets()}
+          optionValue="id"
+          optionLabel="context"
+          placeholder="Search contexts…"
+          errorMessage="Failed to move the note."
+          onSubmit={handleMoveContext}
+        />
+        <ConfirmDialog
+          open={deleteOpen()}
+          onOpenChange={setDeleteOpen}
+          title="Delete note?"
+          description="This permanently deletes this note."
+          confirmLabel="Delete"
+          submittingLabel="Deleting…"
+          errorMessage="Failed to delete the note."
+          onConfirm={handleDeleteNote}
+        />
+      </Show>
     </form>
   );
 }
