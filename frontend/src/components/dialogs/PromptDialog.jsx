@@ -65,10 +65,9 @@ export default function PromptDialog(props) {
                 <TextField.Label class="text-sm text-text">
                   {props.label}
                 </TextField.Label>
-                <TextField.TextArea
+                <TextField.Input
                   autofocus
-                  rows={2}
-                  class="resize-none rounded-md border border-border bg-bg px-3 py-2 text-text"
+                  class="rounded-md border border-border bg-bg px-3 py-2 text-text"
                 />
               </TextField>
               {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
