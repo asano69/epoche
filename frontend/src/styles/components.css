@@ -48,6 +48,14 @@
     min-height: 400px;
   }
 
+  /* List previews (routes/contexts/Notes.jsx) reuse the editor's
+   * typography but must not inherit its fixed min-height: a preview's
+   * height should match its own content, not be padded out to the
+   * editor's size. */
+  .notes-editor-content.note-preview {
+    min-height: 0;
+  }
+
   /* prosekit/basic/typography.css is tuned for a tight, block-based
    * editing UI (e.g. paragraphs get 1px of margin), not for comfortable
    * reading/writing. These selectors repeat both classes already present

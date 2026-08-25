@@ -86,7 +86,15 @@ function NoteEditorView(props) {
     onCleanup(() => unmount?.());
   };
 
-  return <div ref={mountEditor} class="ProseMirror notes-editor-content" />;
+  // "note-preview" strips the editor's fixed min-height (see
+  // components.css) so each preview's height matches its own content
+  // instead of being padded out to the editor's size.
+  return (
+    <div
+      ref={mountEditor}
+      class="ProseMirror notes-editor-content note-preview"
+    />
+  );
 }
 
 // Notes list for a single context, newest first, loaded page by page as
@@ -201,112 +209,128 @@ export default function ContextNotes() {
   };
 
   return (
-    <div class="flex flex-col gap-4">
-      <div class="flex items-center gap-4">
-        <h1 class="font-sans text-4xl">{contextName()}</h1>
+    // On wide screens (xl and up, 1280px+) cap the content at a readable
+    // width and reserve a margin beside it for a future
+    // timeline/minimap/scrollbar. Below xl there isn't room for that
+    // margin, so notes keep using the full width like before.
+    <div class="flex xl:justify-center xl:gap-8">
+      <div class="flex w-full flex-col gap-4 xl:max-w-3xl">
+        <div class="flex items-center gap-4">
+          <h1 class="font-sans text-4xl">{contextName()}</h1>
 
-        {/* Rename/delete menu for this context, styled like TopBar's
-            UserMenu. Hidden until the context record has loaded, since
-            both actions need its id. Placed right next to the title
-            (not pushed to the far right) via gap-2 above instead of
-            justify-between. */}
+          {/* Rename/delete menu for this context, styled like TopBar's
+              UserMenu. Hidden until the context record has loaded, since
+              both actions need its id. Placed right next to the title
+              (not pushed to the far right) via gap-2 above instead of
+              justify-between. */}
+          <Show when={context()}>
+            <DropdownMenu>
+              <DropdownMenu.Trigger
+                aria-label="Context actions"
+                class="rounded-md p-1 transition-colors hover:bg-hover-bg"
+              >
+                <Ellipsis size={24} />
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-border bg-card p-1 shadow-popover outline-none font-sans">
+                  <DropdownMenu.Item
+                    onSelect={() => setEditOpen(true)}
+                    class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-text outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
+                  >
+                    <Pencil size={16} />
+                    Edit
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
+                    onSelect={() => setDeleteOpen(true)}
+                    class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-[#dc3545] outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
+                  >
+                    <Trash2 size={16} />
+                    Delete
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu>
+          </Show>
+        </div>
+
+        {/* New note button, pre-fills the combobox on the editor page via
+            the "context" query param (see Editor.jsx). */}
+        <div class="flex justify-center">
+          <A
+            href={notePath(contextName(), todayDate())}
+            aria-label="New note"
+            class="rounded-md p-1 transition-colors hover:bg-hover-bg"
+          >
+            <SquarePen size={30} />
+          </A>
+        </div>
+
+        <Show when={error()}>
+          <p class="text-sm text-[#dc3545]">{error()}</p>
+        </Show>
+
+        {/* One note per row, full width, in a single-column list rather
+            than a grid, so the full (potentially multi-paragraph) content
+            reads naturally without being cramped into a card. */}
+        <div class="flex flex-col divide-y divide-border">
+          <For each={notes()}>
+            {(note) => (
+              <A
+                href={notePath(contextName(), note.date)}
+                class="flex flex-col gap-2 py-4 transition-colors hover:bg-hover-bg"
+              >
+                <span class="text-md font-sans  text-right mr-5">
+                  {formatDisplayDate(note.date)}
+                </span>
+                <NoteContent note={note} />
+              </A>
+            )}
+          </For>
+        </div>
+
+        <Show when={!loading() && notes().length === 0}>
+          <p class="text-sm text-border">No notes yet.</p>
+        </Show>
+
+        <Show when={loading()}>
+          <Loading />
+        </Show>
+
+        {/* Observed by IntersectionObserver to trigger the next page load. */}
+        <div ref={sentinel} class="h-1" />
+
         <Show when={context()}>
-          <DropdownMenu>
-            <DropdownMenu.Trigger
-              aria-label="Context actions"
-              class="rounded-md p-1 transition-colors hover:bg-hover-bg"
-            >
-              <Ellipsis size={24} />
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-border bg-card p-1 shadow-popover outline-none font-sans">
-                <DropdownMenu.Item
-                  onSelect={() => setEditOpen(true)}
-                  class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-text outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
-                >
-                  <Pencil size={16} />
-                  Edit
-                </DropdownMenu.Item>
-                <DropdownMenu.Item
-                  onSelect={() => setDeleteOpen(true)}
-                  class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-[#dc3545] outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
-                >
-                  <Trash2 size={16} />
-                  Delete
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu>
+          <PromptDialog
+            open={editOpen()}
+            onOpenChange={setEditOpen}
+            title="Rename context"
+            label="Name"
+            initialValue={context().context}
+            errorMessage="Failed to rename the context."
+            onSubmit={handleRename}
+          />
+          <ConfirmDialog
+            open={deleteOpen()}
+            onOpenChange={setDeleteOpen}
+            title="Delete context?"
+            description={`This permanently deletes "${contextName()}" and all of its notes.`}
+            confirmLabel="Delete"
+            submittingLabel="Deleting…"
+            errorMessage="Failed to delete the context."
+            onConfirm={handleDelete}
+          />
         </Show>
       </div>
 
-      {/* New note button, pre-fills the combobox on the editor page via
-          the "context" query param (see Editor.jsx). */}
-      <div class="flex justify-center">
-        <A
-          href={notePath(contextName(), todayDate())}
-          aria-label="New note"
-          class="rounded-md p-1 transition-colors hover:bg-hover-bg"
-        >
-          <SquarePen size={30} />
-        </A>
+      {/* Reserved margin for a future timeline/minimap/scrollbar, shown
+          only when there's room (see the xl breakpoint above). For now
+          this is purely decorative: one line per currently-loaded note,
+          no interaction yet. */}
+      <div class="hidden w-16 shrink-0 xl:block">
+        <div class="flex flex-col items-center gap-1.5 pt-2">
+          <For each={notes()}>{() => <div class="h-px w-8 bg-border" />}</For>
+        </div>
       </div>
-
-      <Show when={error()}>
-        <p class="text-sm text-[#dc3545]">{error()}</p>
-      </Show>
-
-      {/* One note per row, full width, in a single-column list rather
-          than a grid, so the full (potentially multi-paragraph) content
-          reads naturally without being cramped into a card. */}
-      <div class="flex flex-col divide-y divide-border">
-        <For each={notes()}>
-          {(note) => (
-            <A
-              href={notePath(contextName(), note.date)}
-              class="flex flex-col gap-2 py-4 transition-colors hover:bg-hover-bg"
-            >
-              <span class="text-md font-sans  text-right mr-5">
-                {formatDisplayDate(note.date)}
-              </span>
-              <NoteContent note={note} />
-            </A>
-          )}
-        </For>
-      </div>
-
-      <Show when={!loading() && notes().length === 0}>
-        <p class="text-sm text-border">No notes yet.</p>
-      </Show>
-
-      <Show when={loading()}>
-        <Loading />
-      </Show>
-
-      {/* Observed by IntersectionObserver to trigger the next page load. */}
-      <div ref={sentinel} class="h-1" />
-
-      <Show when={context()}>
-        <PromptDialog
-          open={editOpen()}
-          onOpenChange={setEditOpen}
-          title="Rename context"
-          label="Name"
-          initialValue={context().context}
-          errorMessage="Failed to rename the context."
-          onSubmit={handleRename}
-        />
-        <ConfirmDialog
-          open={deleteOpen()}
-          onOpenChange={setDeleteOpen}
-          title="Delete context?"
-          description={`This permanently deletes "${contextName()}" and all of its notes.`}
-          confirmLabel="Delete"
-          submittingLabel="Deleting…"
-          errorMessage="Failed to delete the context."
-          onConfirm={handleDelete}
-        />
-      </Show>
     </div>
   );
 }
