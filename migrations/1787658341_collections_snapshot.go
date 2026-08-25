@@ -1038,7 +1038,9 @@ func init() {
 					}
 				],
 				"id": "pbc_3961493164",
-				"indexes": [],
+				"indexes": [
+					"CREATE UNIQUE INDEX ` + "`" + `idx_rsoaozuhfp` + "`" + ` ON ` + "`" + `contexts` + "`" + ` (` + "`" + `context` + "`" + `)"
+				],
 				"listRule": null,
 				"name": "contexts",
 				"system": false,

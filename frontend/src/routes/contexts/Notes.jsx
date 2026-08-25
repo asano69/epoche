@@ -1,6 +1,5 @@
 import {
   createSignal,
-  createResource,
   createEffect,
   on,
   onMount,
@@ -21,6 +20,12 @@ import { defineBasicExtension } from "prosekit/basic";
 import { defineReadonly } from "prosekit/extensions/readonly";
 
 import pb from "../../lib/pb";
+import {
+  contextByName,
+  contextsLoaded,
+  renameContext,
+  deleteContext,
+} from "../../lib/contexts";
 import { formatDisplayDate } from "../../lib/date";
 import Loading from "../../components/Loading";
 import PromptDialog from "../../components/dialogs/PromptDialog";
@@ -44,20 +49,6 @@ function todayDate() {
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
   return `${now.getFullYear()}-${month}-${day}`;
-}
-
-// Backing "contexts" record for this page, used by the edit/delete menu
-// (see ContextNotes below) for its id and current name. Same
-// getFirstListItem-by-name pattern as routes/notes/Editor.jsx's
-// fetchContext.
-async function fetchContext(name) {
-  try {
-    return await pb
-      .collection("contexts")
-      .getFirstListItem(pb.filter("context = {:name}", { name }));
-  } catch {
-    return null;
-  }
 }
 
 // ProseMirror schemas require a doc to contain at least one block node,
@@ -112,7 +103,11 @@ export default function ContextNotes() {
   const [error, setError] = createSignal("");
 
   const navigate = useNavigate();
-  const [context] = createResource(contextName, fetchContext);
+  // Backing "contexts" record for this page, used by the edit/delete
+  // menu below for its id and current name. Derived from the shared
+  // store (see lib/contexts.js) instead of a separate fetch, so it
+  // reflects create/rename/delete done anywhere else in the app.
+  const context = () => contextByName(contextName());
   const [editOpen, setEditOpen] = createSignal(false);
   const [deleteOpen, setDeleteOpen] = createSignal(false);
 
@@ -193,9 +188,7 @@ export default function ContextNotes() {
   // bar and the notes list (which re-fetches on contextName changes,
   // see the effect above) both follow the new name.
   const handleRename = async (newName) => {
-    await pb.collection("contexts").update(context().id, {
-      context: newName,
-    });
+    await renameContext(context().id, newName);
     navigate(`/contexts/${encodeURIComponent(newName)}`);
   };
 
@@ -203,7 +196,7 @@ export default function ContextNotes() {
     // Notes belonging to this context cascade-delete on the server
     // (see the "context" relation field's cascadeDelete in the
     // collections migration), so there's nothing else to clean up here.
-    await pb.collection("contexts").delete(context().id);
+    await deleteContext(context().id);
     navigate("/");
   };
 

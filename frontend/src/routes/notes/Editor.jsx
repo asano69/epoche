@@ -1,5 +1,6 @@
 import { createSignal, onCleanup, Show, createResource, For } from "solid-js";
 import { useParams } from "@solidjs/router";
+import { contextByName, contextsLoaded } from "../../lib/contexts";
 import { Button } from "@kobalte/core/button";
 import Undo2 from "lucide-solid/icons/undo-2";
 import Redo2 from "lucide-solid/icons/redo-2";
@@ -31,14 +32,17 @@ export default function Editor() {
   const date = () =>
     `${params.year}-${params.month.padStart(2, "0")}-${params.day.padStart(2, "0")}`;
 
-  const [context] = createResource(() => params.contextName, fetchContext);
+  // Derived from the shared contexts store (see lib/contexts.js)
+  // instead of a separate fetch, so it stays in sync with
+  // create/rename/delete done anywhere else in the app.
+  const context = () => contextByName(params.contextName);
   const [note] = createResource(
     () => (context() ? [context().id, date()] : undefined),
     fetchNote,
   );
 
   return (
-    <Show when={!context.loading} fallback={<Loading />}>
+    <Show when={contextsLoaded()} fallback={<Loading />}>
       <Show
         when={context()}
         fallback={
@@ -58,18 +62,6 @@ export default function Editor() {
       </Show>
     </Show>
   );
-}
-
-async function fetchContext(name) {
-  try {
-    return await pb
-      .collection("contexts")
-      .getFirstListItem(pb.filter("context = {:name}", { name }));
-  } catch {
-    // No context with this name yet; Editor shows the "unknown context"
-    // message instead of the form.
-    return null;
-  }
 }
 
 async function fetchNote([contextId, date]) {
