@@ -141,7 +141,7 @@ export default function ContextNotes() {
 
   return (
     <div class="flex flex-col gap-4">
-      <h1 class="font-sans text-4xl">{contextName()}</h1>
+      <h1 class="font-display text-4xl">{contextName()}</h1>
 
       {/* New note button, pre-fills the combobox on the editor page via
           the "context" query param (see Editor.jsx). */}
@@ -169,7 +169,7 @@ export default function ContextNotes() {
               href={notePath(contextName(), note.date)}
               class="flex flex-col gap-2 py-4 transition-colors hover:bg-hover-bg"
             >
-              <span class="text-2xl font-display text-right mr-5">
+              <span class="text-md font-display font-semibold text-right mr-5">
                 {formatDisplayDate(note.date)}
               </span>
               <NoteContent note={note} />

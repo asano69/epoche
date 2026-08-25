@@ -20,5 +20,5 @@ const displayFormatter = new Intl.DateTimeFormat("en-US", DATE_FORMAT_OPTIONS);
 // Intl.DateTimeFormat.
 export function formatDisplayDate(date) {
   const parsed = new Date(`${date}T00:00:00Z`);
-  return displayFormatter.format(parsed);
+  return displayFormatter.format(parsed).toUpperCase();
 }

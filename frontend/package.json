@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@fontsource/playfair-display": "^5.2.9",
+    "@fontsource/fraunces": "^5.2.9",
     "@kobalte/core": "^0.13.12",
     "@solidjs/router": "^0.16.1",
     "globals": "^17.7.0",
