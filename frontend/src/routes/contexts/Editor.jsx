@@ -270,7 +270,7 @@ function NoteForm(props) {
         >
           <ArrowLeft size={24} />
         </A>
-        <h1 class="font-sans text-3xl">{formatDisplayDate(props.date)}</h1>
+        <h1 class="font-serif text-3xl">{formatDisplayDate(props.date)}</h1>
       </div>
       <ProseKit editor={editor}>
         <div class="notes-editor">

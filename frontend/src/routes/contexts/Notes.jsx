@@ -253,18 +253,6 @@ export default function ContextNotes() {
           </Show>
         </div>
 
-        {/* New note button, pre-fills the combobox on the editor page via
-            the "context" query param (see Editor.jsx). */}
-        <div class="flex justify-center">
-          <A
-            href={notePath(contextName(), todayDate())}
-            aria-label="New note"
-            class="icon-btn"
-          >
-            <Plus size={30} />
-          </A>
-        </div>
-
         <Show when={error()}>
           <p class="text-sm text-[#dc3545]">{error()}</p>
         </Show>
@@ -274,7 +262,18 @@ export default function ContextNotes() {
             reads naturally without being cramped into a card. */}
         {/* border-t adds a line above the first card too; divide-y still
             handles the lines between the rest. */}
+        {/* "New note" is the first row in the list, styled and sized
+            like the note rows below it so its full width acts as the
+            click target instead of a small standalone icon button. */}
         <div class="flex flex-col divide-y divide-border border-t border-border">
+          <A
+            href={notePath(contextName(), todayDate())}
+            aria-label="New note"
+            class="flex items-center gap-2 py-4 pr-2 transition-colors hover:bg-hover-bg"
+          >
+            <Plus size={20} />
+            <span class="font-sans text-md">New note</span>
+          </A>
           <For each={notes()}>
             {(note) => (
               <A
@@ -291,7 +290,7 @@ export default function ContextNotes() {
                 <div class="min-w-0 flex-1">
                   <NoteContent note={note} />
                 </div>
-                <span class="w-28 shrink-0 whitespace-nowrap text-right text-md font-sans sm:shrink-0 sm:whitespace-nowrap sm:text-md">
+                <span class="w-28 shrink-0 whitespace-nowrap text-right text-md font-serif sm:shrink-0 sm:whitespace-nowrap sm:text-md">
                   {formatDisplayDate(note.date)}
                 </span>
               </A>
