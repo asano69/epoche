@@ -289,7 +289,7 @@ function NoteForm(props) {
           class="flex w-[200px] items-center gap-2 rounded-md border border-border bg-field px-3 py-2"
         >
           <Combobox.Input class="w-0 flex-1 bg-transparent text-text outline-none" />
-          <Combobox.Trigger class="text-text">
+          <Combobox.Trigger class="-m-2 flex cursor-pointer items-center p-2 text-text">
             <Combobox.Icon>
               <ChevronDown size={16} />
             </Combobox.Icon>
