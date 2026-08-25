@@ -279,12 +279,17 @@ export default function ContextNotes() {
             {(note) => (
               <A
                 href={notePath(contextName(), note.date)}
-                class="flex flex-col gap-2 py-4 transition-colors hover:bg-hover-bg"
+                class="flex items-start gap-4 py-4 transition-colors hover:bg-hover-bg"
               >
-                <span class="text-md font-sans  text-right mr-5">
+                {/* Content column takes the remaining space; date column
+                    is a fixed width on the right so dates line up across
+                    rows regardless of content length. */}
+                <div class="min-w-0 flex-1">
+                  <NoteContent note={note} />
+                </div>
+                <span class="w-28 shrink-0 whitespace-nowrap text-right text-md font-sans">
                   {formatDisplayDate(note.date)}
                 </span>
-                <NoteContent note={note} />
               </A>
             )}
           </For>

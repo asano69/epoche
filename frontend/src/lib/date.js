@@ -3,7 +3,7 @@
 // shows a date, without touching any call site.
 const DATE_FORMAT_OPTIONS = {
   year: "numeric",
-  month: "long",
+  month: "short",
   day: "numeric",
 };
 
