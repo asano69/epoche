@@ -10,9 +10,11 @@
          enabled:active:bg-active-bg enabled:active:border-active-border;
   }
 
-  /* Tiptap ships without a UI, so the toolbar and editable area are
-   * styled here instead of a vendor/ override file (there is no
-   * third-party stylesheet to override anymore). */
+  /* ProseKit ships without a UI, so the toolbar and editable area are
+   * styled here instead of a vendor/ override file. ProseKit's own
+   * prosekit/basic/style.css (imported in Editor.jsx) handles the
+   * inner typography and targets the "ProseMirror" class, which is why
+   * that class is applied directly to notes-editor-content below. */
   .notes-editor {
     @apply rounded-md border border-border bg-field;
   }
@@ -30,12 +32,8 @@
     @apply border border-active-border bg-active-bg;
   }
 
-  .notes-editor-content .ProseMirror {
-    @apply rounded-b-md p-3 text-text;
+  .notes-editor-content {
+    @apply rounded-b-md p-3 text-text outline-none;
     min-height: 400px;
-  }
-
-  .notes-editor-content .ProseMirror:focus {
-    outline: none;
   }
 }
