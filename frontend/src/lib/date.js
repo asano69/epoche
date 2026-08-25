@@ -1,13 +1,13 @@
-// Single source of truth for the display style (currently "Jul 17,
-// 2026"). Change these options to change the format everywhere the app
+// Single source of truth for the display style (currently "17 Jul 2026").
+// Change these options to change the format everywhere the app
 // shows a date, without touching any call site.
 const DATE_FORMAT_OPTIONS = {
   year: "numeric",
-  month: "short",
+  month: "long",
   day: "numeric",
 };
 
-const displayFormatter = new Intl.DateTimeFormat("en-US", DATE_FORMAT_OPTIONS);
+const displayFormatter = new Intl.DateTimeFormat("en-GB", DATE_FORMAT_OPTIONS);
 
 // Converts a stored date string ("YYYY-MM-DD") into its display form.
 // Storage keeps the hyphenated ISO form since it's what sorts and

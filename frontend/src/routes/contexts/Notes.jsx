@@ -1,5 +1,6 @@
 import {
   createSignal,
+  createResource,
   createEffect,
   on,
   onMount,
@@ -7,8 +8,12 @@ import {
   For,
   Show,
 } from "solid-js";
-import { useParams, A } from "@solidjs/router";
+import { useParams, useNavigate, A } from "@solidjs/router";
+import { DropdownMenu } from "@kobalte/core/dropdown-menu";
 import SquarePen from "lucide-solid/icons/square-pen";
+import Ellipsis from "lucide-solid/icons/ellipsis";
+import Pencil from "lucide-solid/icons/pencil";
+import Trash2 from "lucide-solid/icons/trash-2";
 import "prosekit/basic/style.css";
 import "prosekit/basic/typography.css";
 import { createEditor, union } from "prosekit/core";
@@ -18,6 +23,8 @@ import { defineReadonly } from "prosekit/extensions/readonly";
 import pb from "../../lib/pb";
 import { formatDisplayDate } from "../../lib/date";
 import Loading from "../../components/Loading";
+import PromptDialog from "../../components/dialogs/PromptDialog";
+import ConfirmDialog from "../../components/dialogs/ConfirmDialog";
 
 const PAGE_SIZE = 20;
 
@@ -37,6 +44,20 @@ function todayDate() {
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
   return `${now.getFullYear()}-${month}-${day}`;
+}
+
+// Backing "contexts" record for this page, used by the edit/delete menu
+// (see ContextNotes below) for its id and current name. Same
+// getFirstListItem-by-name pattern as routes/notes/Editor.jsx's
+// fetchContext.
+async function fetchContext(name) {
+  try {
+    return await pb
+      .collection("contexts")
+      .getFirstListItem(pb.filter("context = {:name}", { name }));
+  } catch {
+    return null;
+  }
 }
 
 // ProseMirror schemas require a doc to contain at least one block node,
@@ -89,6 +110,11 @@ export default function ContextNotes() {
   const [hasMore, setHasMore] = createSignal(true);
   const [loading, setLoading] = createSignal(false);
   const [error, setError] = createSignal("");
+
+  const navigate = useNavigate();
+  const [context] = createResource(contextName, fetchContext);
+  const [editOpen, setEditOpen] = createSignal(false);
+  const [deleteOpen, setDeleteOpen] = createSignal(false);
 
   // Set by the sentinel div's `ref` below; observed once mounted.
   let sentinel;
@@ -163,9 +189,61 @@ export default function ContextNotes() {
 
   onCleanup(() => observer?.disconnect());
 
+  // Renames the context, then navigates to its new URL so the address
+  // bar and the notes list (which re-fetches on contextName changes,
+  // see the effect above) both follow the new name.
+  const handleRename = async (newName) => {
+    await pb.collection("contexts").update(context().id, {
+      context: newName,
+    });
+    navigate(`/contexts/${encodeURIComponent(newName)}`);
+  };
+
+  const handleDelete = async () => {
+    // Notes belonging to this context cascade-delete on the server
+    // (see the "context" relation field's cascadeDelete in the
+    // collections migration), so there's nothing else to clean up here.
+    await pb.collection("contexts").delete(context().id);
+    navigate("/");
+  };
+
   return (
     <div class="flex flex-col gap-4">
-      <h1 class="font-sans text-4xl">{contextName()}</h1>
+      <div class="flex items-center justify-between">
+        <h1 class="font-sans text-4xl">{contextName()}</h1>
+
+        {/* Rename/delete menu for this context, styled like TopBar's
+            UserMenu. Hidden until the context record has loaded, since
+            both actions need its id. */}
+        <Show when={context()}>
+          <DropdownMenu>
+            <DropdownMenu.Trigger
+              aria-label="Context actions"
+              class="rounded-md p-1 transition-colors hover:bg-hover-bg"
+            >
+              <Ellipsis size={24} />
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content class="z-50 min-w-[160px] rounded-md border border-border bg-card p-1 shadow-popover outline-none font-sans">
+                <DropdownMenu.Item
+                  onSelect={() => setEditOpen(true)}
+                  class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-text outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
+                >
+                  <Pencil size={16} />
+                  Edit
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  onSelect={() => setDeleteOpen(true)}
+                  class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-[#dc3545] outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
+                >
+                  <Trash2 size={16} />
+                  Delete
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu>
+        </Show>
+      </div>
 
       {/* New note button, pre-fills the combobox on the editor page via
           the "context" query param (see Editor.jsx). */}
@@ -212,6 +290,28 @@ export default function ContextNotes() {
 
       {/* Observed by IntersectionObserver to trigger the next page load. */}
       <div ref={sentinel} class="h-1" />
+
+      <Show when={context()}>
+        <PromptDialog
+          open={editOpen()}
+          onOpenChange={setEditOpen}
+          title="Rename context"
+          label="Name"
+          initialValue={context().context}
+          errorMessage="Failed to rename the context."
+          onSubmit={handleRename}
+        />
+        <ConfirmDialog
+          open={deleteOpen()}
+          onOpenChange={setDeleteOpen}
+          title="Delete context?"
+          description={`This permanently deletes "${contextName()}" and all of its notes.`}
+          confirmLabel="Delete"
+          submittingLabel="Deleting…"
+          errorMessage="Failed to delete the context."
+          onConfirm={handleDelete}
+        />
+      </Show>
     </div>
   );
 }
