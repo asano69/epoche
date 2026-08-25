@@ -15,7 +15,7 @@
     "globals": "^17.7.0",
     "lucide-solid": "^1.24.0",
     "pocketbase": "^0.27.0",
-    "prosekit": "^0.18.4",
+    "prosekit": "^0.22.0",
     "solid-js": "^1.9.12"
   },
   "devDependencies": {
