@@ -1006,7 +1006,7 @@ func init() {
 						"help": "",
 						"hidden": false,
 						"id": "text3797779838",
-						"max": 0,
+						"max": 100,
 						"min": 0,
 						"name": "context",
 						"pattern": "",

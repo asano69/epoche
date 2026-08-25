@@ -36,7 +36,7 @@ export default function Login() {
         class="flex w-full max-w-sm flex-col gap-4 rounded-md border border-border bg-field p-8 shadow-card"
       >
         <div class="flex justify-center">
-          <Logo size={32} showTitle />
+          <Logo size={40} showTitle />
         </div>
         <input
           type="email"
