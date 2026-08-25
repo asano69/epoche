@@ -1,5 +1,10 @@
 import { render } from "solid-js/web";
 
+// Self-hosted font for date headings (see theme.css's --font-display).
+// Only the weight actually used (400) is imported, to avoid shipping
+// unused font files.
+import "@fontsource/playfair-display/400.css";
+
 // Order matters: tokens.css defines the CSS custom properties every other
 // stylesheet consumes via var().
 import "./styles/index.css";

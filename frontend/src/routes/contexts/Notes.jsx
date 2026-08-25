@@ -169,7 +169,7 @@ export default function ContextNotes() {
               href={notePath(contextName(), note.date)}
               class="flex flex-col gap-2 py-4 transition-colors hover:bg-hover-bg"
             >
-              <span class="text-xl font-serif">
+              <span class="text-2xl font-display text-right mr-5">
                 {formatDisplayDate(note.date)}
               </span>
               <NoteContent note={note} />
