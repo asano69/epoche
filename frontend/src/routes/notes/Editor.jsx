@@ -1,6 +1,15 @@
-import { createSignal, onCleanup, Show, createResource, For } from "solid-js";
+import {
+  createSignal,
+  onCleanup,
+  Show,
+  createResource,
+  createEffect,
+  For,
+} from "solid-js";
 import { useParams, useNavigate } from "@solidjs/router";
 import { Button } from "@kobalte/core/button";
+import { Combobox } from "@kobalte/core/combobox";
+import ChevronDown from "lucide-solid/icons/chevron-down";
 import Undo2 from "lucide-solid/icons/undo-2";
 import Redo2 from "lucide-solid/icons/redo-2";
 import Bold from "lucide-solid/icons/bold";
@@ -36,7 +45,11 @@ export default function Editor() {
 
   return (
     <Show when={!params.id || note()} fallback={<Loading />}>
-      <NoteForm id={params.id} initialContent={note()?.note} />
+      <NoteForm
+        id={params.id}
+        initialContent={note()?.note}
+        initialContextId={note()?.context}
+      />
     </Show>
   );
 }
@@ -177,6 +190,37 @@ function Toolbar() {
 function NoteForm(props) {
   const navigate = useNavigate();
 
+  // Full candidate list, fetched once; the combobox below narrows this
+  // down as the user types (see handleContextInputChange).
+  const [allContexts] = createResource(() =>
+    pb.collection("contexts").getFullList({ sort: "context" }),
+  );
+  const [contextOptions, setContextOptions] = createSignal([]);
+  const [selectedContext, setSelectedContext] = createSignal(null);
+
+  // Once contexts have loaded, populate the dropdown and, when editing
+  // an existing note, preselect its current context.
+  createEffect(() => {
+    const list = allContexts();
+    if (!list) return;
+    const options = list.map((c) => ({ value: c.id, label: c.context }));
+    setContextOptions(options);
+    if (props.initialContextId) {
+      const match = options.find((o) => o.value === props.initialContextId);
+      if (match) setSelectedContext(match);
+    }
+  });
+
+  // Narrows the dropdown to contexts whose label contains the typed text.
+  const handleContextInputChange = (value) => {
+    const list = allContexts() ?? [];
+    setContextOptions(
+      list
+        .filter((c) => c.context.toLowerCase().includes(value.toLowerCase()))
+        .map((c) => ({ value: c.id, label: c.context })),
+    );
+  };
+
   const editor = createEditor({
     extension: defineBasicExtension(),
     defaultContent: props.initialContent,
@@ -198,7 +242,10 @@ function NoteForm(props) {
     setError("");
     setSaving(true);
     try {
-      const data = { note: editor.getDocJSON() };
+      const data = {
+        note: editor.getDocJSON(),
+        context: selectedContext()?.value ?? "",
+      };
       if (props.id) {
         await pb.collection("notes").update(props.id, data);
       } else {
@@ -217,6 +264,43 @@ function NoteForm(props) {
 
   return (
     <form onSubmit={handleSave} class="flex w-full flex-col gap-4">
+      <Combobox
+        options={contextOptions()}
+        optionValue="value"
+        optionLabel="label"
+        optionTextValue="label"
+        value={selectedContext()}
+        onChange={setSelectedContext}
+        onInputChange={handleContextInputChange}
+        placeholder="Context (optional)"
+        itemComponent={(itemProps) => (
+          <Combobox.Item
+            item={itemProps.item}
+            class="flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm text-text outline-none data-[highlighted]:bg-hover-bg"
+          >
+            <Combobox.ItemLabel>
+              {itemProps.item.rawValue.label}
+            </Combobox.ItemLabel>
+          </Combobox.Item>
+        )}
+      >
+        <Combobox.Control
+          aria-label="Context"
+          class="flex w-[200px] items-center gap-2 rounded-md border border-border bg-field px-3 py-2"
+        >
+          <Combobox.Input class="w-0 flex-1 bg-transparent text-text outline-none" />
+          <Combobox.Trigger class="text-text">
+            <Combobox.Icon>
+              <ChevronDown size={16} />
+            </Combobox.Icon>
+          </Combobox.Trigger>
+        </Combobox.Control>
+        <Combobox.Portal>
+          <Combobox.Content class="z-50 rounded-md border border-border bg-card p-1 shadow-popover">
+            <Combobox.Listbox />
+          </Combobox.Content>
+        </Combobox.Portal>
+      </Combobox>
       <ProseKit editor={editor}>
         <div class="notes-editor">
           <Toolbar />
