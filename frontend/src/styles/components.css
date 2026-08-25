@@ -9,4 +9,33 @@
          enabled:hover:bg-hover-bg enabled:hover:border-hover-border
          enabled:active:bg-active-bg enabled:active:border-active-border;
   }
+
+  /* Tiptap ships without a UI, so the toolbar and editable area are
+   * styled here instead of a vendor/ override file (there is no
+   * third-party stylesheet to override anymore). */
+  .notes-editor {
+    @apply rounded-md border border-border bg-field;
+  }
+
+  .notes-toolbar {
+    @apply flex gap-1 rounded-t-md border-b border-border bg-surface p-2;
+  }
+
+  .notes-toolbar button {
+    @apply cursor-pointer rounded-sm px-2 py-1 text-sm text-text
+         transition-colors hover:bg-hover-bg;
+  }
+
+  .notes-toolbar button.is-active {
+    @apply border border-active-border bg-active-bg;
+  }
+
+  .notes-editor-content .ProseMirror {
+    @apply rounded-b-md p-3 text-text;
+    min-height: 400px;
+  }
+
+  .notes-editor-content .ProseMirror:focus {
+    outline: none;
+  }
 }
