@@ -9,7 +9,7 @@ import {
 } from "solid-js";
 import { useParams, useNavigate, A } from "@solidjs/router";
 import { DropdownMenu } from "@kobalte/core/dropdown-menu";
-import SquarePen from "lucide-solid/icons/square-pen";
+import SquarePen from "lucide-solid/icons/plus";
 import Ellipsis from "lucide-solid/icons/ellipsis";
 import Pencil from "lucide-solid/icons/pencil";
 import Trash2 from "lucide-solid/icons/trash-2";
@@ -272,7 +272,9 @@ export default function ContextNotes() {
         {/* One note per row, full width, in a single-column list rather
             than a grid, so the full (potentially multi-paragraph) content
             reads naturally without being cramped into a card. */}
-        <div class="flex flex-col divide-y divide-border">
+        {/* border-t adds a line above the first card too; divide-y still
+            handles the lines between the rest. */}
+        <div class="flex flex-col divide-y divide-border border-t border-border">
           <For each={notes()}>
             {(note) => (
               <A
