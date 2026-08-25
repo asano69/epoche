@@ -10,6 +10,21 @@ import tailwindcss from "@tailwindcss/vite";
 const appName = process.env.APP_NAME;
 
 export default defineConfig({
+  optimizeDeps: {
+    // Every prosekit subpath used anywhere in the app must be listed
+    // here so Vite pre-bundles them together from a single dependency
+    // scan at startup. Otherwise, a subpath first imported later in a
+    // dev session (e.g. prosekit/extensions/readonly, only used on the
+    // notes list page) gets pre-bundled on its own, producing a second,
+    // reference-distinct copy of prosekit/core's internals -- which
+    // then fails prosekit's internal `assert(a.facet === b.facet)`
+    // check when combining extensions via union().
+    include: [
+      "prosekit/core",
+      "prosekit/basic",
+      "prosekit/extensions/readonly",
+    ],
+  },
   plugins: [
     solid(),
     tailwindcss(),
