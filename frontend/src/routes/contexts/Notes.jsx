@@ -9,7 +9,7 @@ import {
 } from "solid-js";
 import { useParams, useNavigate, A } from "@solidjs/router";
 import { DropdownMenu } from "@kobalte/core/dropdown-menu";
-import SquarePen from "lucide-solid/icons/plus";
+import Plus from "lucide-solid/icons/plus";
 import Ellipsis from "lucide-solid/icons/ellipsis";
 import Pencil from "lucide-solid/icons/pencil";
 import Trash2 from "lucide-solid/icons/trash-2";
@@ -261,7 +261,7 @@ export default function ContextNotes() {
             aria-label="New note"
             class="icon-btn"
           >
-            <SquarePen size={30} />
+            <Plus size={30} />
           </A>
         </div>
 
