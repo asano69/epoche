@@ -2,6 +2,7 @@ import { createSignal, createEffect } from "solid-js";
 import { Dialog } from "@kobalte/core/dialog";
 import { TextField } from "@kobalte/core/text-field";
 import X from "lucide-solid/icons/x";
+import Check from "lucide-solid/icons/check";
 
 // Reusable single-field "edit" dialog: a label, a textarea, and
 // Cancel/Save buttons. Fully controlled via `open`/`onOpenChange` so it
@@ -72,10 +73,19 @@ export default function PromptDialog(props) {
               </TextField>
               {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
               <div class="flex justify-end gap-2">
-                <Dialog.CloseButton type="button" class="btn">
+                <Dialog.CloseButton
+                  type="button"
+                  class="btn flex items-center gap-1.5"
+                >
+                  <X size={16} />
                   Cancel
                 </Dialog.CloseButton>
-                <button type="submit" class="btn" disabled={submitting()}>
+                <button
+                  type="submit"
+                  class="btn flex items-center gap-1.5"
+                  disabled={submitting()}
+                >
+                  <Check size={16} />
                   {submitting()
                     ? (props.submittingLabel ?? "Saving…")
                     : (props.submitLabel ?? "Save")}

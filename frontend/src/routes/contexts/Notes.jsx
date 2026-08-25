@@ -202,12 +202,14 @@ export default function ContextNotes() {
 
   return (
     <div class="flex flex-col gap-4">
-      <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
         <h1 class="font-sans text-4xl">{contextName()}</h1>
 
         {/* Rename/delete menu for this context, styled like TopBar's
             UserMenu. Hidden until the context record has loaded, since
-            both actions need its id. */}
+            both actions need its id. Placed right next to the title
+            (not pushed to the far right) via gap-2 above instead of
+            justify-between. */}
         <Show when={context()}>
           <DropdownMenu>
             <DropdownMenu.Trigger
@@ -240,7 +242,7 @@ export default function ContextNotes() {
 
       {/* New note button, pre-fills the combobox on the editor page via
           the "context" query param (see Editor.jsx). */}
-      <div class="flex justify-end">
+      <div class="flex justify-center">
         <A
           href={notePath(contextName(), todayDate())}
           aria-label="New note"

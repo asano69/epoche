@@ -70,7 +70,7 @@ export default function Sidebar(props) {
                 {(context) => (
                   <A
                     href={`/contexts/${encodeURIComponent(context.context)}`}
-                    class="block rounded-md px-2 py-1.5 text-sm text-text transition-colors hover:bg-hover-bg"
+                    class="block rounded-md px-2 py-1.5 text-md text-text transition-colors hover:bg-hover-bg"
                   >
                     {context.context}
                   </A>

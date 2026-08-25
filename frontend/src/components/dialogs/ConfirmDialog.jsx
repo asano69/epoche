@@ -1,5 +1,7 @@
 import { createSignal } from "solid-js";
 import { AlertDialog } from "@kobalte/core/alert-dialog";
+import X from "lucide-solid/icons/x";
+import Check from "lucide-solid/icons/check";
 
 // Reusable "are you sure?" confirmation dialog. Fully controlled via
 // `open`/`onOpenChange` so it can be opened from anywhere (e.g. a
@@ -40,20 +42,25 @@ export default function ConfirmDialog(props) {
             <AlertDialog.Title class="text-lg font-sans">
               {props.title}
             </AlertDialog.Title>
-            <AlertDialog.Description class="mt-2 text-sm text-border">
+            <AlertDialog.Description class="mt-2 text-sm text-[#dc3545]">
               {props.description}
             </AlertDialog.Description>
             {error() && <p class="mt-2 text-sm text-[#dc3545]">{error()}</p>}
             <div class="mt-6 flex justify-end gap-2">
-              <AlertDialog.CloseButton type="button" class="btn">
+              <AlertDialog.CloseButton
+                type="button"
+                class="btn flex items-center gap-1.5"
+              >
+                <X size={16} />
                 Cancel
               </AlertDialog.CloseButton>
               <button
                 type="button"
-                class="btn"
+                class="btn flex items-center gap-1.5"
                 disabled={submitting()}
                 onClick={handleConfirm}
               >
+                <Check size={16} />
                 {submitting()
                   ? (props.submittingLabel ?? "Working…")
                   : (props.confirmLabel ?? "Confirm")}
