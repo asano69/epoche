@@ -1,16 +1,83 @@
-import { Show } from "solid-js";
+import { createSignal, createResource, createMemo, For, Show } from "solid-js";
+import { A } from "@solidjs/router";
+import { Search } from "@kobalte/core/search";
+import SearchIcon from "lucide-solid/icons/search";
+
+import pb from "../../lib/pb";
+import Loading from "../Loading";
+
+// Fetches every context, sorted alphabetically. Unlike ContextNotes.jsx's
+// note list, this isn't paginated: the sidebar always shows the full set.
+async function fetchContexts() {
+  return pb.collection("contexts").getFullList({ sort: "context" });
+}
 
 // Visibility is fully controlled by `open`; no separate desktop/mobile
 // behavior.
 export default function Sidebar(props) {
+  const [contexts] = createResource(fetchContexts);
+  const [query, setQuery] = createSignal("");
+
+  // Client-side filtering: Search's own options/suggestion machinery is
+  // unused here (see options={[]} below), so this is what actually
+  // reacts to the typed query.
+  const filteredContexts = createMemo(() => {
+    const all = contexts() ?? [];
+    const q = query().trim().toLowerCase();
+    if (!q) return all;
+    return all.filter((context) =>
+      context.context.toLowerCase().includes(q),
+    );
+  });
+
   return (
     <Show when={props.open}>
-      <aside class="w-64 border-r border-border bg-bg">
-        <nav class="space-y-2 p-4">
-          {/* Sidebar navigation items will go here */}
-          <div class="text-sm text-border">
-            Navigation coming soon
-          </div>
+      <aside class="flex h-full min-h-0 w-64 flex-col border-r border-border bg-bg">
+        <div class="p-3">
+          {/* options stays empty and no Search.Portal/Content/Listbox is
+              rendered: this only borrows Search's Control/Icon/Input
+              parts for styling. onInputChange drives the plain list
+              below instead of Search's built-in suggestion dropdown. */}
+          <Search
+            options={[]}
+            triggerMode="manual"
+            placeholder="Search contexts…"
+            onInputChange={setQuery}
+          >
+            <Search.Control class="flex items-center gap-2 rounded-md border border-border bg-field px-3 py-2">
+              <Search.Icon class="text-border">
+                <SearchIcon size={16} />
+              </Search.Icon>
+              <Search.Input class="w-full bg-transparent text-sm text-text outline-none" />
+            </Search.Control>
+          </Search>
+        </div>
+
+        {/* Scrolls independently of MainLayout's <main>: this nav owns
+            its own overflow-y-auto within the fixed-height <aside>
+            (h-full, bounded by MainLayout's min-h-0 flex row). */}
+        <nav class="flex-1 overflow-y-auto p-2">
+          <Show when={!contexts.loading} fallback={<Loading />}>
+            <Show
+              when={filteredContexts().length > 0}
+              fallback={
+                <p class="px-2 py-1.5 text-sm text-border">
+                  No contexts found.
+                </p>
+              }
+            >
+              <For each={filteredContexts()}>
+                {(context) => (
+                  <A
+                    href={`/contexts/${encodeURIComponent(context.context)}`}
+                    class="block rounded-md px-2 py-1.5 text-sm text-text transition-colors hover:bg-hover-bg"
+                  >
+                    {context.context}
+                  </A>
+                )}
+              </For>
+            </Show>
+          </Show>
         </nav>
       </aside>
     </Show>

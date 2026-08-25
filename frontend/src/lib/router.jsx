@@ -19,9 +19,10 @@ export default function AppRouter() {
       {/* A note is addressed by its context and date, not by id: this
           keeps the URL self-descriptive and matches the "one note per
           context per day" rule enforced by the notes collection's
-          unique index on (context, date). */}
+          unique index on (context, date). "contexts" (plural), matching
+          the "/contexts/:contextName" list route below. */}
       <Route
-        path="/context/:contextName/:year/:month/:day"
+        path="/contexts/:contextName/:year/:month/:day"
         component={NoteEditor}
       />
       <Route path="/contexts/:contextName" component={ContextNotes} />

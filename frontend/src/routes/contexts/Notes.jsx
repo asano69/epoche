@@ -1,4 +1,12 @@
-import { createSignal, onMount, onCleanup, For, Show } from "solid-js";
+import {
+  createSignal,
+  createEffect,
+  on,
+  onMount,
+  onCleanup,
+  For,
+  Show,
+} from "solid-js";
 import { useParams, A } from "@solidjs/router";
 import SquarePen from "lucide-solid/icons/square-pen";
 import "prosekit/basic/style.css";
@@ -13,11 +21,12 @@ import Loading from "../../components/Loading";
 
 const PAGE_SIZE = 20;
 
-// Builds the "/context/:contextName/:year/:month/:day" path for a note,
-// splitting its "date" field (stored as "YYYY-MM-DD") into segments.
+// Builds the "/contexts/:contextName/:year/:month/:day" path for a
+// note, splitting its "date" field (stored as "YYYY-MM-DD") into
+// segments.
 function notePath(contextName, date) {
   const [year, month, day] = date.split("-");
-  return `/context/${encodeURIComponent(contextName)}/${year}/${month}/${day}`;
+  return `/contexts/${encodeURIComponent(contextName)}/${year}/${month}/${day}`;
 }
 
 // Today's date as "YYYY-MM-DD". Each context can only have one note per
@@ -122,8 +131,6 @@ export default function ContextNotes() {
   };
 
   onMount(() => {
-    loadPage(1);
-
     // Loads the next page once the sentinel element at the bottom of the
     // list scrolls into view. IntersectionObserver's default root (the
     // viewport) still respects clipping from MainLayout's scrollable
@@ -136,6 +143,23 @@ export default function ContextNotes() {
     });
     if (sentinel) observer.observe(sentinel);
   });
+
+  // Re-fetches from page 1 whenever contextName changes. Solid Router
+  // reuses this same component instance when navigating between two
+  // paths matched by the same route (e.g. picking a different context
+  // from the sidebar), so onMount alone would only ever load whichever
+  // context was active on first render. on(contextName, ...) scopes the
+  // effect to that single dependency, so signals read inside loadPage
+  // (loading, page, ...) don't also end up retriggering it.
+  createEffect(
+    on(contextName, () => {
+      setNotes([]);
+      setPage(0);
+      setHasMore(true);
+      setError("");
+      loadPage(1);
+    }),
+  );
 
   onCleanup(() => observer?.disconnect());
 
