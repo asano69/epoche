@@ -227,7 +227,7 @@ export default function ContextNotes() {
             <DropdownMenu>
               <DropdownMenu.Trigger
                 aria-label="Context actions"
-                class="rounded-md p-1 transition-colors hover:bg-hover-bg"
+                class="icon-btn"
               >
                 <Ellipsis size={24} />
               </DropdownMenu.Trigger>
@@ -259,7 +259,7 @@ export default function ContextNotes() {
           <A
             href={notePath(contextName(), todayDate())}
             aria-label="New note"
-            class="rounded-md p-1 transition-colors hover:bg-hover-bg"
+            class="icon-btn"
           >
             <SquarePen size={30} />
           </A>

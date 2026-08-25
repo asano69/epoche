@@ -1,4 +1,11 @@
 @layer components {
+  /* Shared tap target for icon-only buttons/links (TopBar, UserMenu,
+   * Notes list, Editor). p-2 instead of p-1 roughly doubles the hit
+   * area around each icon without changing its visual size. */
+  .icon-btn {
+    @apply rounded-md p-2 transition-colors hover:bg-hover-bg;
+  }
+
   .btn {
     @apply my-1.5 cursor-pointer appearance-none rounded-md px-3 py-[7px]
          font-sans text-base font-semibold
@@ -34,7 +41,7 @@
   }
 
   .notes-toolbar button {
-    @apply flex h-8 w-8 cursor-pointer items-center justify-center rounded-sm
+    @apply flex h-9 w-9 cursor-pointer items-center justify-center rounded-sm
          text-text transition-colors hover:bg-hover-bg
          disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent;
   }

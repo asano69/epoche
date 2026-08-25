@@ -266,7 +266,7 @@ function NoteForm(props) {
         <A
           href={`/contexts/${encodeURIComponent(props.contextName)}`}
           aria-label="Back to notes list"
-          class="rounded-md p-1 transition-colors hover:bg-hover-bg"
+          class="icon-btn"
         >
           <ArrowLeft size={24} />
         </A>

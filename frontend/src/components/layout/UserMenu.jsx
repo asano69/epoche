@@ -13,10 +13,7 @@ export default function UserMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenu.Trigger
-        aria-label="Open menu"
-        class="rounded-md p-1 transition-colors hover:bg-hover-bg"
-      >
+      <DropdownMenu.Trigger aria-label="Open menu" class="icon-btn">
         <EllipsisVertical size={24} />
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>

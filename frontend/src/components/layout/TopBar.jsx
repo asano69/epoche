@@ -34,6 +34,7 @@ export default function TopBar(props) {
               onClick={() => props.onToggleSidebar()}
               aria-label="Toggle sidebar"
               aria-expanded={props.sidebarOpen}
+              class="icon-btn"
             >
               {props.sidebarOpen ? <X size={30} /> : <Menu size={30} />}
             </button>
@@ -41,12 +42,12 @@ export default function TopBar(props) {
           <Logo showTitle linkable />
         </div>
 
-        <nav class="flex items-center gap-4">
+        <nav class="flex items-center gap-1">
           <button
             type="button"
             onClick={() => setCreateOpen(true)}
             aria-label="New context"
-            class="rounded-md p-1 transition-colors hover:bg-hover-bg"
+            class="icon-btn"
           >
             <Plus size={24} />
           </button>
