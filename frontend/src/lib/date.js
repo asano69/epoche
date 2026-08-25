@@ -1,9 +1,9 @@
-// Single source of truth for the display style (currently "JANUARY 13,
-// 2018"). Change these options to change the format everywhere the app
+// Single source of truth for the display style (currently "Jul 17,
+// 2026"). Change these options to change the format everywhere the app
 // shows a date, without touching any call site.
 const DATE_FORMAT_OPTIONS = {
   year: "numeric",
-  month: "long",
+  month: "short",
   day: "numeric",
 };
 
@@ -20,5 +20,5 @@ const displayFormatter = new Intl.DateTimeFormat("en-US", DATE_FORMAT_OPTIONS);
 // Intl.DateTimeFormat.
 export function formatDisplayDate(date) {
   const parsed = new Date(`${date}T00:00:00Z`);
-  return displayFormatter.format(parsed).toUpperCase();
+  return displayFormatter.format(parsed);
 }

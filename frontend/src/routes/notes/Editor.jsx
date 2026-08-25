@@ -267,7 +267,7 @@ function NoteForm(props) {
 
   return (
     <form onSubmit={handleSave} class="flex w-full flex-col gap-4">
-      <h1 class="font-display font-semibold text-xl">{formatDisplayDate(props.date)}</h1>
+      <h1 class="font-sans  text-xl">{formatDisplayDate(props.date)}</h1>
       <ProseKit editor={editor}>
         <div class="notes-editor">
           <Toolbar />
