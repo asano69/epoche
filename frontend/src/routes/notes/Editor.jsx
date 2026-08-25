@@ -6,7 +6,7 @@ import {
   createEffect,
   For,
 } from "solid-js";
-import { useParams, useNavigate } from "@solidjs/router";
+import { useParams, useNavigate, useSearchParams } from "@solidjs/router";
 import { Button } from "@kobalte/core/button";
 import { Combobox } from "@kobalte/core/combobox";
 import ChevronDown from "lucide-solid/icons/chevron-down";
@@ -36,6 +36,10 @@ import Loading from "../../components/Loading";
 // field, so no HTML conversion is needed on save or load.
 export default function Editor() {
   const params = useParams();
+  // "context" is set when arriving from a context page's new-note
+  // button (see routes/contexts/Notes.jsx), so the combobox below can
+  // be pre-filled with that context.
+  const [searchParams] = useSearchParams();
   // Only fetches when params.id is set, i.e. when editing an existing
   // note; createResource simply never runs the fetcher for "/notes/new".
   const [note] = createResource(
@@ -49,6 +53,7 @@ export default function Editor() {
         id={params.id}
         initialContent={note()?.note}
         initialContextId={note()?.context}
+        initialContextName={searchParams.context}
       />
     </Show>
   );
@@ -198,8 +203,9 @@ function NoteForm(props) {
   const [contextOptions, setContextOptions] = createSignal([]);
   const [selectedContext, setSelectedContext] = createSignal(null);
 
-  // Once contexts have loaded, populate the dropdown and, when editing
-  // an existing note, preselect its current context.
+  // Once contexts have loaded, populate the dropdown and preselect a
+  // context: by id when editing an existing note, or by name when
+  // arriving from a context page's new-note button.
   createEffect(() => {
     const list = allContexts();
     if (!list) return;
@@ -207,6 +213,9 @@ function NoteForm(props) {
     setContextOptions(options);
     if (props.initialContextId) {
       const match = options.find((o) => o.value === props.initialContextId);
+      if (match) setSelectedContext(match);
+    } else if (props.initialContextName) {
+      const match = options.find((o) => o.label === props.initialContextName);
       if (match) setSelectedContext(match);
     }
   });

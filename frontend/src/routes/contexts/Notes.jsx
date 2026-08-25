@@ -1,5 +1,6 @@
 import { createSignal, onMount, onCleanup, For, Show } from "solid-js";
 import { useParams, A } from "@solidjs/router";
+import SquarePen from "lucide-solid/icons/square-pen";
 import "prosekit/basic/style.css";
 import "prosekit/basic/typography.css";
 import { createEditor, union } from "prosekit/core";
@@ -122,7 +123,19 @@ export default function ContextNotes() {
 
   return (
     <div class="flex flex-col gap-4">
-      <h1 class="font-serif text-2xl">{contextName()}</h1>
+      <h1 class="font-sans text-4xl">{contextName()}</h1>
+
+      {/* New note button, pre-fills the combobox on the editor page via
+          the "context" query param (see Editor.jsx). */}
+      <div class="flex justify-end">
+        <A
+          href={`/notes/new?context=${encodeURIComponent(contextName())}`}
+          aria-label="New note"
+          class="rounded-md p-1 transition-colors hover:bg-hover-bg"
+        >
+          <SquarePen size={30} />
+        </A>
+      </div>
 
       <Show when={error()}>
         <p class="text-sm text-[#dc3545]">{error()}</p>
@@ -138,7 +151,7 @@ export default function ContextNotes() {
               href={`/notes/${note.id}`}
               class="flex flex-col gap-2 py-4 transition-colors hover:bg-hover-bg"
             >
-              <span class="text-xs text-border">
+              <span class="text-xl font-serif">
                 {new Date(note.created).toLocaleString()}
               </span>
               <NoteContent note={note} />
