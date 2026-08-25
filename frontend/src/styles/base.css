@@ -1,6 +1,6 @@
 @layer base {
   body {
-    @apply h-screen w-screen font-serif bg-bg text-text;
+    @apply h-screen w-screen font-sans bg-bg text-text;
   }
 
   strong {

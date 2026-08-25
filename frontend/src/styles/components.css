@@ -20,20 +20,55 @@
   }
 
   .notes-toolbar {
-    @apply flex gap-1 rounded-t-md border-b border-border bg-surface p-2;
+    @apply flex flex-wrap items-center gap-0.5 rounded-t-md border-b border-border bg-surface p-1.5;
+  }
+
+  .notes-toolbar-group {
+    @apply flex items-center gap-0.5;
+  }
+
+  /* A thin vertical rule between toolbar groups (history / marks / block
+   * type / lists), so related buttons read as one cluster. */
+  .notes-toolbar-divider {
+    @apply mx-1 h-5 w-px bg-border;
   }
 
   .notes-toolbar button {
-    @apply cursor-pointer rounded-sm px-2 py-1 text-sm text-text
-         transition-colors hover:bg-hover-bg;
+    @apply flex h-8 w-8 cursor-pointer items-center justify-center rounded-sm
+         text-text transition-colors hover:bg-hover-bg
+         disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent;
   }
 
   .notes-toolbar button.is-active {
-    @apply border border-active-border bg-active-bg;
+    @apply bg-active-bg text-text;
   }
 
   .notes-editor-content {
     @apply rounded-b-md p-3 text-text outline-none;
     min-height: 400px;
+  }
+
+  /* prosekit/basic/typography.css is tuned for a tight, block-based
+   * editing UI (e.g. paragraphs get 1px of margin), not for comfortable
+   * reading/writing. These selectors repeat both classes already present
+   * on the editor's root element (see notes-editor-content above) purely
+   * to out-specificity that stylesheet, regardless of which file happens
+   * to load first. */
+  .notes-editor-content.ProseMirror p {
+    margin: 0 0 0.75em;
+    line-height: 1.7;
+  }
+
+  .notes-editor-content.ProseMirror h1,
+  .notes-editor-content.ProseMirror h2,
+  .notes-editor-content.ProseMirror h3,
+  .notes-editor-content.ProseMirror h4,
+  .notes-editor-content.ProseMirror h5,
+  .notes-editor-content.ProseMirror h6 {
+    margin-bottom: 0.5em;
+  }
+
+  .notes-editor-content.ProseMirror blockquote {
+    margin: 0.75em 0;
   }
 }

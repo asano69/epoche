@@ -1,6 +1,17 @@
 import { createSignal, onCleanup, Show, createResource, For } from "solid-js";
 import { useParams, useNavigate } from "@solidjs/router";
 import { Button } from "@kobalte/core/button";
+import Undo2 from "lucide-solid/icons/undo-2";
+import Redo2 from "lucide-solid/icons/redo-2";
+import Bold from "lucide-solid/icons/bold";
+import Italic from "lucide-solid/icons/italic";
+import UnderlineIcon from "lucide-solid/icons/underline";
+import Strikethrough from "lucide-solid/icons/strikethrough";
+import CodeIcon from "lucide-solid/icons/code";
+import Heading2 from "lucide-solid/icons/heading-2";
+import Quote from "lucide-solid/icons/quote";
+import List from "lucide-solid/icons/list";
+import ListOrdered from "lucide-solid/icons/list-ordered";
 import "prosekit/basic/style.css";
 import "prosekit/basic/typography.css";
 import { defineBasicExtension } from "prosekit/basic";
@@ -30,14 +41,30 @@ export default function Editor() {
   );
 }
 
-// Toolbar buttons, each backed by a ProseKit command. Kept as a plain
-// list so adding a formatting option later is a one-line change.
-const TOOLBAR_ITEMS = [
-  { key: "bold", label: "B" },
-  { key: "italic", label: "I" },
-  { key: "heading", label: "H2" },
-  { key: "bulletList", label: "•" },
-  { key: "orderedList", label: "1." },
+// Toolbar buttons, grouped by function (history / marks / block type /
+// lists) and each backed by a ProseKit command. Kept as plain data so
+// adding, removing, or reordering a formatting option is a one-line
+// change instead of touching the render logic below.
+const TOOLBAR_GROUPS = [
+  [
+    { key: "undo", label: "Undo", icon: Undo2 },
+    { key: "redo", label: "Redo", icon: Redo2 },
+  ],
+  [
+    { key: "bold", label: "Bold", icon: Bold },
+    { key: "italic", label: "Italic", icon: Italic },
+    { key: "underline", label: "Underline", icon: UnderlineIcon },
+    { key: "strike", label: "Strikethrough", icon: Strikethrough },
+    { key: "code", label: "Inline code", icon: CodeIcon },
+  ],
+  [
+    { key: "heading", label: "Heading", icon: Heading2 },
+    { key: "blockquote", label: "Quote", icon: Quote },
+  ],
+  [
+    { key: "bulletList", label: "Bullet list", icon: List },
+    { key: "orderedList", label: "Numbered list", icon: ListOrdered },
+  ],
 ];
 
 // Derives { isActive, canExec, command } for every toolbar button from
@@ -45,6 +72,16 @@ const TOOLBAR_ITEMS = [
 // re-runs it on every ProseMirror transaction.
 function getToolbarItems(editor) {
   return {
+    undo: {
+      isActive: false,
+      canExec: editor.commands.undo.canExec(),
+      command: () => editor.commands.undo(),
+    },
+    redo: {
+      isActive: false,
+      canExec: editor.commands.redo.canExec(),
+      command: () => editor.commands.redo(),
+    },
     bold: {
       isActive: editor.marks.bold.isActive(),
       canExec: editor.commands.toggleBold.canExec(),
@@ -55,10 +92,30 @@ function getToolbarItems(editor) {
       canExec: editor.commands.toggleItalic.canExec(),
       command: () => editor.commands.toggleItalic(),
     },
+    underline: {
+      isActive: editor.marks.underline.isActive(),
+      canExec: editor.commands.toggleUnderline.canExec(),
+      command: () => editor.commands.toggleUnderline(),
+    },
+    strike: {
+      isActive: editor.marks.strike.isActive(),
+      canExec: editor.commands.toggleStrike.canExec(),
+      command: () => editor.commands.toggleStrike(),
+    },
+    code: {
+      isActive: editor.marks.code.isActive(),
+      canExec: editor.commands.toggleCode.canExec(),
+      command: () => editor.commands.toggleCode(),
+    },
     heading: {
       isActive: editor.nodes.heading.isActive({ level: 2 }),
       canExec: editor.commands.toggleHeading.canExec({ level: 2 }),
       command: () => editor.commands.toggleHeading({ level: 2 }),
+    },
+    blockquote: {
+      isActive: editor.nodes.blockquote.isActive(),
+      canExec: editor.commands.toggleBlockquote.canExec(),
+      command: () => editor.commands.toggleBlockquote(),
     },
     bulletList: {
       isActive: editor.nodes.list.isActive({ kind: "bullet" }),
@@ -80,20 +137,34 @@ function Toolbar() {
 
   return (
     <div class="notes-toolbar">
-      <For each={TOOLBAR_ITEMS}>
-        {({ key, label }) => (
-          <Show when={items()[key]}>
-            {(item) => (
-              <button
-                type="button"
-                disabled={!item().canExec}
-                onClick={item().command}
-                classList={{ "is-active": item().isActive }}
-              >
-                {label}
-              </button>
-            )}
-          </Show>
+      <For each={TOOLBAR_GROUPS}>
+        {(group, groupIndex) => (
+          <>
+            {/* No divider before the first group. */}
+            <Show when={groupIndex() > 0}>
+              <div class="notes-toolbar-divider" />
+            </Show>
+            <div class="notes-toolbar-group">
+              <For each={group}>
+                {({ key, label, icon: Icon }) => (
+                  <Show when={items()[key]}>
+                    {(item) => (
+                      <button
+                        type="button"
+                        title={label}
+                        aria-label={label}
+                        disabled={!item().canExec}
+                        onClick={item().command}
+                        classList={{ "is-active": item().isActive }}
+                      >
+                        <Icon size={17} />
+                      </button>
+                    )}
+                  </Show>
+                )}
+              </For>
+            </div>
+          </>
         )}
       </For>
     </div>
