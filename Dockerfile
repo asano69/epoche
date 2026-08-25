@@ -70,5 +70,5 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 EXPOSE 3000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["epoche", "serve", "--dir=pb_data"]
+CMD ["epoche", "serve"]
 
