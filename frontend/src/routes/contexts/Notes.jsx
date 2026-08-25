@@ -279,15 +279,19 @@ export default function ContextNotes() {
             {(note) => (
               <A
                 href={notePath(contextName(), note.date)}
-                class="flex items-start gap-4 py-4 transition-colors hover:bg-hover-bg"
+                                class="flex flex-col-reverse gap-1 py-4 pr-2 transition-colors hover:bg-hover-bg sm:flex-row sm:items-start sm:gap-2"
+                
               >
-                {/* Content column takes the remaining space; date column
+              {/* Content column takes the remaining space; date column
                     is a fixed width on the right so dates line up across
-                    rows regardless of content length. */}
+                    rows regardless of content length. On mobile
+                    (flex-col-reverse), the date renders above the content
+                    instead, since there isn't room for a side-by-side
+                    layout. */}
                 <div class="min-w-0 flex-1">
                   <NoteContent note={note} />
                 </div>
-                <span class="w-28 shrink-0 whitespace-nowrap text-right text-md font-sans">
+                <span class="w-28 shrink-0 whitespace-nowrap text-right text-md font-sans sm:shrink-0 sm:whitespace-nowrap sm:text-md">
                   {formatDisplayDate(note.date)}
                 </span>
               </A>
