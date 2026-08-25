@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import Menu from "lucide-solid/icons/menu";
 import X from "lucide-solid/icons/x";
@@ -26,15 +26,19 @@ export default function TopBar(props) {
     <header class="sticky top-0 z-40 p-2  border-b border-border bg-nav">
       <div class="flex justify-between px-8">
         <div class="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => props.onToggleSidebar()}
-            aria-label="Toggle sidebar"
-            aria-expanded={props.sidebarOpen}
-          >
-            {props.sidebarOpen ? <X size={30} /> : <Menu size={30} />}
-          </button>
-          <Logo linkable />
+          {/* Toggle button only exists on mobile; on desktop the
+              sidebar is always visible so there's nothing to toggle. */}
+          <Show when={props.isMobile}>
+            <button
+              type="button"
+              onClick={() => props.onToggleSidebar()}
+              aria-label="Toggle sidebar"
+              aria-expanded={props.sidebarOpen}
+            >
+              {props.sidebarOpen ? <X size={30} /> : <Menu size={30} />}
+            </button>
+          </Show>
+          <Logo showTitle linkable />
         </div>
 
         <nav class="flex items-center gap-4">

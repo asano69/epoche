@@ -29,7 +29,7 @@ export default function Logo(props) {
   const title = () =>
     props.showTitle && (
       <div
-        class="logo font-serif"
+        class="logo font-display"
         style={{ "font-size": `${titleFontSize()}px` }}
       >
         {__APP_NAME__}

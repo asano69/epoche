@@ -32,7 +32,20 @@ export default function Sidebar(props) {
 
   return (
     <Show when={props.open}>
-      <aside class="flex h-full min-h-0 w-64 flex-col border-r border-border bg-bg">
+      {/* Backdrop only exists on mobile: clicking it closes the overlay,
+          and it visually separates the sidebar from the content behind it. */}
+      <Show when={props.isMobile}>
+        <div
+          class="absolute inset-0 z-20 bg-black/40"
+          onClick={props.onClose}
+        />
+      </Show>
+      <aside
+        classList={{
+          "absolute inset-y-0 left-0 z-30 shadow-popover": props.isMobile,
+        }}
+        class="flex h-full min-h-0 w-64 flex-col border-r border-border bg-bg"
+      >
         <div class="p-3">
           {/* options stays empty and no Search.Portal/Content/Listbox is
               rendered: this only borrows Search's Control/Icon/Input
