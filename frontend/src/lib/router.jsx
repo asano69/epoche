@@ -2,7 +2,7 @@ import { Router, Route } from "@solidjs/router";
 
 import AppShell from "../components/layout/AppShell";
 import Home from "../routes/Home";
-import NoteEditor from "../routes/notes/Editor";
+import NoteEditor from "../routes/contexts/Editor";
 import ContextNotes from "../routes/contexts/Notes";
 
 // All top-level routes in one place, so adding or removing a page never

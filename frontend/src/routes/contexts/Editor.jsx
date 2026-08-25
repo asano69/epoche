@@ -1,7 +1,8 @@
 import { createSignal, onCleanup, Show, createResource, For } from "solid-js";
-import { useParams } from "@solidjs/router";
+import { useParams, A } from "@solidjs/router";
 import { contextByName, contextsLoaded } from "../../lib/contexts";
 import { Button } from "@kobalte/core/button";
+import ArrowLeft from "lucide-solid/icons/arrow-left";
 import Undo2 from "lucide-solid/icons/undo-2";
 import Redo2 from "lucide-solid/icons/redo-2";
 import Bold from "lucide-solid/icons/bold";
@@ -54,6 +55,7 @@ export default function Editor() {
         <Show when={!note.loading} fallback={<Loading />}>
           <NoteForm
             contextId={context().id}
+            contextName={context().context}
             date={date()}
             noteId={note()?.id}
             initialContent={note()?.note}
@@ -259,7 +261,17 @@ function NoteForm(props) {
 
   return (
     <form onSubmit={handleSave} class="flex w-full flex-col gap-4">
-      <h1 class="font-sans  text-3xl">{formatDisplayDate(props.date)}</h1>
+      <div class="flex items-center gap-3">
+        {/* Back to this context's notes list. */}
+        <A
+          href={`/contexts/${encodeURIComponent(props.contextName)}`}
+          aria-label="Back to notes list"
+          class="rounded-md p-1 transition-colors hover:bg-hover-bg"
+        >
+          <ArrowLeft size={24} />
+        </A>
+        <h1 class="font-sans text-3xl">{formatDisplayDate(props.date)}</h1>
+      </div>
       <ProseKit editor={editor}>
         <div class="notes-editor">
           <Toolbar />
