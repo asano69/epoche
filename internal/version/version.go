@@ -5,4 +5,4 @@ package version
 
 // Version is injected at build time via -ldflags (see Makefile and
 // Dockerfile). Defaults to "dev" for local builds that skip that step.
-var Version = "0.1.0"
+var Version = "dev"

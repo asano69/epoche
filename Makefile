@@ -9,7 +9,7 @@ BINARY := kairos
 PORTS := 3000 3001
 
 .PHONY: all
-all: kill-ports frontend## (*) Build frontend assets and start the server
+all: # (*) Build frontend assets and start the server
 	go run ./cmd/$(BINARY) superuser upsert admin@mail.internal password --dir=pb_data
 	go run ./cmd/$(BINARY) serve
 
@@ -28,19 +28,8 @@ build-frontend: frontend-deps
 build: build-frontend
 	go build -ldflags="-X github.com/asano69/kairos/internal/version.Version=$(VERSION)" -o $(BINARY) ./cmd/$(BINARY)
 
-.PHONY: kill-ports
-kill-ports:
-	@for port in $(PORTS); do \
-		pid=$$(lsof -ti tcp:$$port); \
-		if [ -n "$$pid" ]; then \
-			echo "Killing process on port $$port (pid $$pid)"; \
-			kill -9 $$pid; \
-		fi \
-	done
-
-
 .PHONY: server
-server: kill-ports
+server: 
 	#./kairos migrate up --dir=pb_data
 	./$(BINARY) superuser upsert admin@mail.internal password --dir=pb_data
 	./$(BINARY) serve --dev
