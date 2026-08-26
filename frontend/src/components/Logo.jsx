@@ -1,3 +1,4 @@
+import { createResource, Show } from "solid-js";
 import { A } from "@solidjs/router";
 
 // size: overall pixel size of the icon (width == height). Defaults to
@@ -9,6 +10,15 @@ import { A } from "@solidjs/router";
 // onClick: if provided, the logo becomes a plain clickable button
 // instead of a link, and `linkable` is ignored.
 export default function Logo(props) {
+  // Fetches the running server version from the public, unauthenticated
+  // /api/version endpoint (see internal/serve/handler.go), instead of
+  // hardcoding it here.
+  const [version] = createResource(async () => {
+    const res = await fetch("/api/version");
+    const data = await res.json();
+    return data.version;
+  });
+
   const size = () => props.size ?? 30;
   const icon = (
     // stroke uses currentColor instead of a fixed hex, so the icon
@@ -64,9 +74,16 @@ export default function Logo(props) {
       <div class="flex items-center gap-2">{p.children}</div>
     );
   return (
+<div class="flex items-center gap-2">
     <Wrap>
       {icon}
       {title()}
     </Wrap>
+          {/* Rendered outside Wrap so it's never part of the clickable
+          logo (button/link). */}
+      <Show when={version()}>
+        <span class="font-mono text-xs">v{version()}</span>
+      </Show>
+    </div>
   );
 }
