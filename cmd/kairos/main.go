@@ -6,15 +6,15 @@ import (
 	"github.com/pocketbase/pocketbase"
 	pbcmd "github.com/pocketbase/pocketbase/cmd"
 
-	"github.com/asano69/epoche/internal/version"
-	_ "github.com/asano69/epoche/migrations"
+	"github.com/asano69/kairos/internal/version"
+	_ "github.com/asano69/kairos/migrations"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 )
 
 // dataDirEnvVar lets the data directory be set via environment variable
 // instead of always requiring the "--dir" flag. If unset, PocketBase
 // falls back to its own default (a "pb_data" folder next to the binary).
-const dataDirEnvVar = "EPOCHE_DATA_DIR"
+const dataDirEnvVar = "KAIROS_DATA_DIR"
 
 func main() {
 	app := pocketbase.NewWithConfig(pocketbase.Config{
@@ -24,7 +24,7 @@ func main() {
 		DefaultDataDir: os.Getenv(dataDirEnvVar),
 	})
 
-	// Registers "epoche migrate up/down/create/collections/history-sync"
+	// Registers "kairos migrate up/down/create/collections/history-sync"
 	// for manual or CI-driven schema management. Automigrate is off because
 	// the schema is defined purely in Go migration files (internal/migrations),
 	// not edited through the PocketBase dashboard.
@@ -33,8 +33,8 @@ func main() {
 	})
 
 	root := app.RootCmd
-	root.Use = "epoche"
-	root.Short = "epoche"
+	root.Use = "kairos"
+	root.Short = "kairos"
 	root.SilenceUsage = true
 	root.Version = version.Version
 

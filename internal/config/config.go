@@ -1,4 +1,4 @@
-// Package config loads the configuration for epoche serve from
+// Package config loads the configuration for kairos serve from
 // environment variables.
 package config
 
@@ -23,17 +23,17 @@ type Config struct {
 //
 // Recognised variables:
 //
-//	EPOCHE_SERVER_HOST         default "0.0.0.0"
-//	EPOCHE_SERVER_PORT         default 3000
+//	KAIROS_SERVER_HOST         default "0.0.0.0"
+//	KAIROS_SERVER_PORT         default 3000
 func Load() (*Config, error) {
-	port, err := envInt("EPOCHE_SERVER_PORT", 3000)
+	port, err := envInt("KAIROS_SERVER_PORT", 3000)
 	if err != nil {
 		return nil, err
 	}
 
 	cfg := &Config{
 		Server: ServerConfig{
-			Host: envString("EPOCHE_SERVER_HOST", "0.0.0.0"),
+			Host: envString("KAIROS_SERVER_HOST", "0.0.0.0"),
 			Port: port,
 		},
 	}

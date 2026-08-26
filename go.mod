@@ -1,4 +1,4 @@
-module github.com/asano69/epoche
+module github.com/asano69/kairos
 
 go 1.25.9
 

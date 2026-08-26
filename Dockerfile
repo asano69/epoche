@@ -5,8 +5,8 @@
 # ==========================================
 FROM node:22-alpine AS node-builder
 # Passed through to vite.config.js's `define` at build time; defaults to
-# "epoche" to match the Go backend's default (see internal/config).
-ARG APP_NAME=epoche
+# "kairos" to match the Go backend's default (see internal/config).
+ARG APP_NAME=kairos
 ENV APP_NAME=${APP_NAME}
 WORKDIR /build/frontend
 # Copy only dependency manifests first to leverage Docker layer caching
@@ -39,13 +39,13 @@ COPY internal/ ./internal/
 COPY migrations/ ./migrations/
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -X github.com/asano69/epoche/internal/version.Version=${VERSION}" -o epoche ./cmd/epoche
+    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -X github.com/asano69/kairos/internal/version.Version=${VERSION}" -o kairos ./cmd/kairos
 
 # ==========================================
 # Stage 2: Runtime
 # ==========================================
 FROM alpine:3.23
-WORKDIR /epoche
+WORKDIR /kairos
 
 RUN apk add --no-cache \
     ca-certificates \
@@ -56,13 +56,13 @@ RUN apk add --no-cache \
     curl \
     sqlite
  
-RUN addgroup -g 1000 epoche && \
-    adduser -D -u 1000 -G epoche epoche
+RUN addgroup -g 1000 kairos && \
+    adduser -D -u 1000 -G kairos kairos
 
-COPY --from=go-builder /build/epoche /usr/local/bin/epoche
+COPY --from=go-builder /build/kairos /usr/local/bin/kairos
 
-RUN mkdir -p /certs /epoche/pb_data
-RUN chown -R epoche:epoche /epoche
+RUN mkdir -p /certs /kairos/pb_data
+RUN chown -R kairos:kairos /kairos
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
@@ -70,5 +70,5 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 EXPOSE 3000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["epoche", "serve"]
+CMD ["kairos", "serve"]
 

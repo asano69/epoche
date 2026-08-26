@@ -6,7 +6,7 @@ set -euo pipefail
 # settings
 ########################################
 
-VERSION_FILE="cmd/epoche/main.go"
+VERSION_FILE="cmd/kairos/main.go"
 REMOTE="origin"
 BRANCH="main"
 COMMIT_PREFIX="release:"

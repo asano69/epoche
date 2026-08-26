@@ -1,21 +1,21 @@
 services:
-  epoche:
-    image: ghcr.io/asano69/epoche:latest
-    container_name: epoche
+  kairos:
+    image: ghcr.io/asano69/kairos:latest
+    container_name: kairos
     restart: unless-stopped
     ports:
       - "3000:3000"
     env_file:
-      - epoche.env
+      - kairos.env
     volumes:
-      - ./data:/epoche/pb_data
+      - ./data:/kairos/pb_data
         #- /etc/ssl/certs/root_ca.crt:/certs/root_ca.crt:ro # optional
     environment:
       - TZ=Etc/UTC
       #
-      - EPOCHE_SERVER_HOST=0.0.0.0
-      - EPOCHE_SERVER_PORT=3000
-      - EPOCHE_DATA_DIR=pb_data
+      - KAIROS_SERVER_HOST=0.0.0.0
+      - KAIROS_SERVER_PORT=3000
+      - KAIROS_DATA_DIR=pb_data
       #
       #- INITIAL_ADMIN_EMAIL=admin@mail.internal # default
       #- INITIAL_ADMIN_PASSWORD=password # default

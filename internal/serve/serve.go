@@ -11,7 +11,7 @@ import (
 
 	"log/slog"
 
-	"github.com/asano69/epoche/internal/config"
+	"github.com/asano69/kairos/internal/config"
 
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"

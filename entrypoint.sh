@@ -11,7 +11,7 @@ fi
 ADMIN_EMAIL="${INITIAL_ADMIN_EMAIL:-admin@mail.internal}"
 ADMIN_PASSWORD="${INITIAL_ADMIN_PASSWORD:-password}"
 
-# /epoche/pb_data
-su-exec epoche:epoche epoche superuser create "$ADMIN_EMAIL" "$ADMIN_PASSWORD" || true
+# /kairos/pb_data
+su-exec kairos:kairos kairos superuser create "$ADMIN_EMAIL" "$ADMIN_PASSWORD" || true
 
-exec su-exec epoche:epoche "$@"
+exec su-exec kairos:kairos "$@"

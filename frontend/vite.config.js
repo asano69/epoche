@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 // Single source of truth for this build: also read by __APP_NAME__ below
 // and by the index.html %APP_NAME% placeholder, so the value only has to
 // be resolved once. Backed by the same APP_NAME the Go backend reads
-// (see epoche.env), so both sides agree without duplicating the value.
+// (see kairos.env), so both sides agree without duplicating the value.
 const appName = process.env.APP_NAME;
 
 export default defineConfig({

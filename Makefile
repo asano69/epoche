@@ -1,9 +1,9 @@
 .PHONY: lint
 
-include epoche.env
+include kairos.env
 export
 
-BINARY := epoche
+BINARY := kairos
 
 # Ports used by the dev servers (frontend, backend, and PocketBase-style API)
 PORTS := 3000 3001
@@ -26,7 +26,7 @@ build-frontend: frontend-deps
 
 .PHONY: build
 build: build-frontend
-	go build -ldflags="-X github.com/asano69/epoche/internal/version.Version=$(VERSION)" -o $(BINARY) ./cmd/$(BINARY)
+	go build -ldflags="-X github.com/asano69/kairos/internal/version.Version=$(VERSION)" -o $(BINARY) ./cmd/$(BINARY)
 
 .PHONY: kill-ports
 kill-ports:
@@ -41,7 +41,7 @@ kill-ports:
 
 .PHONY: server
 server: kill-ports
-	#./epoche migrate up --dir=pb_data
+	#./kairos migrate up --dir=pb_data
 	./$(BINARY) superuser upsert admin@mail.internal password --dir=pb_data
 	./$(BINARY) serve --dev
 
@@ -77,5 +77,5 @@ format:
 # 本番では、後方互換性のために残しておいたほうが良いかも。
 migrate-collections:
 	ls -1 migrations/*.go | sort | head -n -1 | xargs rm -f
-	yes | go run ./cmd/epoche migrate collections
+	yes | go run ./cmd/kairos migrate collections
 	ls -1 migrations/*.go | sort | head -n -1 | xargs rm -f

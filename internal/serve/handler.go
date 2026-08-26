@@ -3,14 +3,14 @@ package serve
 import (
 	"net/http"
 
-	"github.com/asano69/epoche/internal/static"
-	"github.com/asano69/epoche/internal/version"
+	"github.com/asano69/kairos/internal/static"
+	"github.com/asano69/kairos/internal/version"
 
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 )
 
-// registerRoutes wires up every HTTP route served by epoche. It is passed
+// registerRoutes wires up every HTTP route served by kairos. It is passed
 // to app.OnServe().BindFunc in serve.go, keeping all route/handler
 // definitions in this file while serve.go stays focused on server setup
 // and startup.
