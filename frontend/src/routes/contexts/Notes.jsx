@@ -123,7 +123,7 @@ export default function ContextNotes() {
             <Plus size={20} />
             <span class="font-sans text-md">New note</span>
           </div>
-          <span class="w-28 shrink-0 whitespace-nowrap text-right text-md font-serif sm:shrink-0 sm:whitespace-nowrap sm:text-md">
+          <span class="w-28 shrink-0 whitespace-nowrap text-right text-md font-mono sm:shrink-0 sm:whitespace-nowrap sm:text-md">
             {formatDisplayDate(todayDate())}
           </span>
         </A>

@@ -313,7 +313,7 @@ function NoteForm(props) {
         >
           <ArrowLeft size={24} />
         </A>
-        <h1 class="font-serif text-3xl">{formatDisplayDate(props.date)}</h1>
+        <h1 class="font-mono text-3xl">{formatDisplayDate(props.date)}</h1>
         {/* Move/delete only make sense for a note that already exists. */}
         <Show when={noteId()}>
           <ActionsMenu

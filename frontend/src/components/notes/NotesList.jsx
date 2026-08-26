@@ -186,7 +186,7 @@ export default function NotesList(props) {
               <div class="min-w-0 flex-1">
                 <NoteContent note={note} />
               </div>
-              <span class="w-28 shrink-0 whitespace-nowrap text-right text-md font-serif sm:shrink-0 sm:whitespace-nowrap sm:text-md">
+              <span class="w-28 shrink-0 whitespace-nowrap text-right text-md font-mono sm:shrink-0 sm:whitespace-nowrap sm:text-md">
                 {formatDisplayDate(note.date)}
               </span>
             </A>
