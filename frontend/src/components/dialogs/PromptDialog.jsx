@@ -4,10 +4,13 @@ import { TextField } from "@kobalte/core/text-field";
 import X from "lucide-solid/icons/x";
 import Check from "lucide-solid/icons/check";
 
-// Reusable single-field "edit" dialog: a label, a textarea, and
-// Cancel/Save buttons. Fully controlled via `open`/`onOpenChange` so it
-// can be opened from anywhere (e.g. a dropdown menu item) instead of
-// needing its own Dialog.Trigger next to it.
+// Reusable single-field "edit" dialog: a label, a text field, and an
+// inline checkmark button to save (mirrors ComboboxDialog's layout, no
+// separate Cancel/Save text buttons -- closing via the header's X
+// button is the cancel path). Fully controlled via
+// `open`/`onOpenChange` so it can be opened from anywhere (e.g. a
+// dropdown menu item) instead of needing its own Dialog.Trigger next to
+// it.
 //
 // Props: open, onOpenChange, title, label, initialValue, onSubmit
 // (async (value) => void), submitLabel, submittingLabel, errorMessage.
@@ -58,39 +61,37 @@ export default function PromptDialog(props) {
               </Dialog.CloseButton>
             </div>
             <form onSubmit={handleSubmit} class="flex flex-col gap-4">
-              <TextField
-                value={value()}
-                onChange={setValue}
-                class="flex flex-col gap-1"
-              >
-                <TextField.Label class="text-sm text-text">
-                  {props.label}
-                </TextField.Label>
-                <TextField.Input
-                  autofocus
-                  class="rounded-md border border-border bg-bg px-3 py-2 text-text"
-                />
-              </TextField>
-              {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
-              <div class="flex justify-end gap-2">
-                <Dialog.CloseButton
-                  type="button"
-                  class="btn flex items-center gap-1.5"
+              {/* Field and its inline save button share one row, same
+                  pattern as ComboboxDialog: no separate full-width
+                  Cancel/Save row anymore. */}
+              <div class="flex items-end gap-2">
+                <TextField
+                  value={value()}
+                  onChange={setValue}
+                  class="flex flex-1 flex-col gap-1"
                 >
-                  <X size={16} />
-                  Cancel
-                </Dialog.CloseButton>
+                  <TextField.Label class="text-sm text-text">
+                    {props.label}
+                  </TextField.Label>
+                  <TextField.Input
+                    autofocus
+                    class="rounded-md border border-border bg-bg px-3 py-2 text-text"
+                  />
+                </TextField>
                 <button
                   type="submit"
-                  class="btn flex items-center gap-1.5"
+                  aria-label={
+                    submitting()
+                      ? (props.submittingLabel ?? "Saving…")
+                      : (props.submitLabel ?? "Save")
+                  }
+                  class="icon-btn shrink-0"
                   disabled={submitting()}
                 >
-                  <Check size={16} />
-                  {submitting()
-                    ? (props.submittingLabel ?? "Saving…")
-                    : (props.submitLabel ?? "Save")}
+                  <Check size={20} />
                 </button>
               </div>
+              {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
             </form>
           </Dialog.Content>
         </div>
