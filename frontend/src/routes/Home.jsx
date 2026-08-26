@@ -7,8 +7,8 @@ import NotesList from "../components/notes/NotesList";
 export default function Home() {
   return (
     <div class="flex w-full flex-col gap-4 xl:mx-auto xl:max-w-3xl">
-      <h1 class="mb-4 font-sans text-4xl">All notes</h1>
-      <NotesList showContext />
+      <h1 class="mb-4 font-sans text-4xl"></h1>
+      <NotesList />
     </div>
   );
 }

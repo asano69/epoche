@@ -56,13 +56,16 @@ function NoteEditorView(props) {
     onCleanup(() => unmount?.());
   };
 
-  // "note-preview" strips the editor's fixed min-height (see
-  // components.css) so each preview's height matches its own content
-  // instead of being padded out to the editor's size.
+  // pt-0 overrides notes-editor-content's default p-3 padding-top so
+  // this preview's text starts flush with the row's own top padding,
+  // lining up with the date column beside it. pb-6 widens the gap
+  // below the text instead, since the row's own py-4 alone reads as
+  // too tight underneath multi-line content.
   return (
-    // No min-height here now that the shared class doesn't force one:
-    // this preview's height naturally matches its own content.
-    <div ref={mountEditor} class="ProseMirror notes-editor-content" />
+    <div
+      ref={mountEditor}
+      class="ProseMirror notes-editor-content pt-0 pb-6"
+    />
   );
 }
 
@@ -76,10 +79,6 @@ function NoteEditorView(props) {
 //   filter: optional PocketBase filter string restricting which notes
 //     are listed (e.g. "context.context = '...'"). Omit to list every
 //     note across every context.
-//   showContext: whether to render each note's context name above its
-//     content. Needed on the global list, where notes from different
-//     contexts are mixed together; redundant (and off by default) on a
-//     single context's own page.
 export default function NotesList(props) {
   const [notes, setNotes] = createSignal([]);
   const [page, setPage] = createSignal(0);
@@ -185,11 +184,6 @@ export default function NotesList(props) {
                   instead, since there isn't room for a side-by-side
                   layout. */}
               <div class="min-w-0 flex-1">
-                <Show when={props.showContext}>
-                  <p class="mb-1 text-xs font-semibold text-border">
-                    {note.expand.context.context}
-                  </p>
-                </Show>
                 <NoteContent note={note} />
               </div>
               <span class="w-28 shrink-0 whitespace-nowrap text-right text-md font-serif sm:shrink-0 sm:whitespace-nowrap sm:text-md">

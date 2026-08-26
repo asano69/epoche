@@ -20,9 +20,9 @@
 - PocketBase v0.39+
 
 ### frontend
-- solid.js v1.9
-- kobalte v0.13+
-- tailwind v4
-- 
+- Solid.js v1.9
+- Kobalte v0.13+
+- Tailwind v4
+- ProseKit
 
 
