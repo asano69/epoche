@@ -67,57 +67,61 @@ export default function ComboboxDialog(props) {
               </Dialog.CloseButton>
             </div>
             <form onSubmit={handleSubmit} class="flex flex-col gap-4">
-              <Combobox
-                options={props.options}
-                optionValue={props.optionValue}
-                optionLabel={props.optionLabel}
-                optionTextValue={props.optionLabel}
-                value={value()}
-                onChange={setValue}
-                placeholder={props.placeholder}
-                itemComponent={(itemProps) => (
-                  <Combobox.Item
-                    item={itemProps.item}
-                    class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-text outline-none data-[highlighted]:bg-hover-bg"
-                  >
-                    <Combobox.ItemLabel>
-                      {itemProps.item.rawValue[props.optionLabel]}
-                    </Combobox.ItemLabel>
-                  </Combobox.Item>
-                )}
-                class="flex flex-col gap-1"
-              >
-                <Combobox.Label class="text-sm text-text">
-                  {props.label}
-                </Combobox.Label>
-                <Combobox.Control class="flex items-center gap-2 rounded-md border border-border bg-bg px-3 py-2">
-                  <Combobox.Input class="w-full bg-transparent text-sm text-text outline-none" />
-                  <Combobox.Trigger class="text-border">
-                    <Combobox.Icon>
-                      <ChevronDown size={16} />
-                    </Combobox.Icon>
-                  </Combobox.Trigger>
-                </Combobox.Control>
-                <Combobox.Portal>
-                  <Combobox.Content class="z-50 rounded-md border border-border bg-card p-1 shadow-popover">
-                    <Combobox.Listbox class="max-h-60 overflow-y-auto" />
-                  </Combobox.Content>
-                </Combobox.Portal>
-              </Combobox>
-              {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
-              <div class="flex justify-center gap-2">
-    
+              {/* Combobox and confirm button share one row: no separate
+                  full-width "Save" button anymore, just a check icon
+                  button right next to the combobox. */}
+              <div class="flex items-end gap-2">
+                <Combobox
+                  options={props.options}
+                  optionValue={props.optionValue}
+                  optionLabel={props.optionLabel}
+                  optionTextValue={props.optionLabel}
+                  value={value()}
+                  onChange={setValue}
+                  placeholder={props.placeholder}
+                  itemComponent={(itemProps) => (
+                    <Combobox.Item
+                      item={itemProps.item}
+                      class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-text outline-none data-[highlighted]:bg-hover-bg"
+                    >
+                      <Combobox.ItemLabel>
+                        {itemProps.item.rawValue[props.optionLabel]}
+                      </Combobox.ItemLabel>
+                    </Combobox.Item>
+                  )}
+                  class="flex flex-1 flex-col gap-1"
+                >
+                  <Combobox.Label class="text-sm text-text">
+                    {props.label}
+                  </Combobox.Label>
+                  <Combobox.Control class="flex items-center gap-2 rounded-md border border-border bg-bg px-3 py-2">
+                    <Combobox.Input class="w-full bg-transparent text-sm text-text outline-none" />
+                    <Combobox.Trigger class="text-border">
+                      <Combobox.Icon>
+                        <ChevronDown size={16} />
+                      </Combobox.Icon>
+                    </Combobox.Trigger>
+                  </Combobox.Control>
+                  <Combobox.Portal>
+                    <Combobox.Content class="z-50 rounded-md border border-border bg-card p-1 shadow-popover">
+                      <Combobox.Listbox class="max-h-60 overflow-y-auto" />
+                    </Combobox.Content>
+                  </Combobox.Portal>
+                </Combobox>
                 <button
                   type="submit"
-                  class="btn flex items-center gap-1.5"
+                  aria-label={
+                    submitting()
+                      ? (props.submittingLabel ?? "Saving…")
+                      : (props.submitLabel ?? "Save")
+                  }
+                  class="icon-btn shrink-0"
                   disabled={submitting() || !value()}
                 >
-                  <Check size={16} />
-                  {submitting()
-                    ? (props.submittingLabel ?? "Saving…")
-                    : (props.submitLabel ?? "Save")}
+                  <Check size={20} />
                 </button>
               </div>
+              {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
             </form>
           </Dialog.Content>
         </div>

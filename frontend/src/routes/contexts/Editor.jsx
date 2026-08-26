@@ -332,7 +332,7 @@ function NoteForm(props) {
           open={moveOpen()}
           onOpenChange={setMoveOpen}
           title="Move context"
-          label="Context"
+          label=""
           options={moveTargets()}
           optionValue="id"
           optionLabel="context"
