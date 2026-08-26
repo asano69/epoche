@@ -53,7 +53,7 @@ export default function Login() {
           value={password()}
           onInput={(e) => setPassword(e.target.value)}
           required
-          class="rounded-md border border-[var(--color-line-soft)] bg-[var(--color-background)] px-3 py-2 text-[var(--color-foreground)]"
+          class="rounded-md border border-border bg-bg px-3 py-2 text-text"
         />
         {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
         <button type="submit" class="btn" disabled={pending()}>
