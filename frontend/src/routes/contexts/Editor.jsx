@@ -1,10 +1,11 @@
 import { createSignal, onCleanup, Show, createResource, For } from "solid-js";
 import { useParams, useNavigate, A } from "@solidjs/router";
 import { contextByName, contexts, contextsLoaded } from "../../lib/contexts";
-import { Button } from "@kobalte/core/button";
 import ArrowLeft from "lucide-solid/icons/arrow-left";
 import ArrowRightLeft from "lucide-solid/icons/arrow-right-left";
 import Trash2 from "lucide-solid/icons/trash-2";
+import Save from "lucide-solid/icons/save";
+import Check from "lucide-solid/icons/check";
 import Undo2 from "lucide-solid/icons/undo-2";
 import Redo2 from "lucide-solid/icons/redo-2";
 import Bold from "lucide-solid/icons/bold";
@@ -23,6 +24,9 @@ import { createEditor } from "prosekit/core";
 import { ProseKit, useEditorDerivedValue } from "prosekit/solid";
 
 import pb from "../../lib/pb";
+// NOTE: `Button` from "@kobalte/core/button" import removed below since
+// the save action is now a plain <button class="icon-btn"> in the
+// header row instead of a full-width kobalte Button.
 import { formatDisplayDate } from "../../lib/date";
 import { notePath } from "../../lib/notePath";
 import Loading from "../../components/Loading";
@@ -229,9 +233,14 @@ function NoteForm(props) {
   // this same context/date without needing a page reload.
   const [noteId, setNoteId] = createSignal(props.noteId);
   const [saving, setSaving] = createSignal(false);
+  // Briefly true right after a successful save, to swap the save icon
+  // for a checkmark; reverted by the timeout scheduled in handleSave.
+  const [justSaved, setJustSaved] = createSignal(false);
   const [error, setError] = createSignal("");
   const [moveOpen, setMoveOpen] = createSignal(false);
   const [deleteOpen, setDeleteOpen] = createSignal(false);
+  let savedTimeout;
+  onCleanup(() => clearTimeout(savedTimeout));
 
   // Every context except the one this note is currently in, i.e. the
   // valid destinations for "Move context".
@@ -266,6 +275,11 @@ function NoteForm(props) {
         const record = await pb.collection("notes").create(data);
         setNoteId(record.id);
       }
+      // Show a checkmark in place of the save icon for a moment to
+      // confirm the save succeeded, then revert back to the save icon.
+      setJustSaved(true);
+      clearTimeout(savedTimeout);
+      savedTimeout = setTimeout(() => setJustSaved(false), 1500);
     } catch {
       setError("Failed to save the note.");
     } finally {
@@ -297,25 +311,43 @@ function NoteForm(props) {
           <ArrowLeft size={24} />
         </A>
         <h1 class="font-serif text-3xl">{formatDisplayDate(props.date)}</h1>
-        {/* Move/delete only make sense for a note that already exists. */}
-        <Show when={noteId()}>
-          <ActionsMenu
-            label="Note actions"
-            items={[
-              {
-                label: "Move context",
-                icon: ArrowRightLeft,
-                onSelect: () => setMoveOpen(true),
-              },
-              {
-                label: "Delete",
-                icon: Trash2,
-                onSelect: () => setDeleteOpen(true),
-                destructive: true,
-              },
-            ]}
-          />
-        </Show>
+        {/* Pushes the actions menu and save button to the far right of
+            this row, regardless of whether the actions menu is shown. */}
+        <div class="ml-auto flex items-center gap-1">
+          {/* Move/delete only make sense for a note that already exists. */}
+          <Show when={noteId()}>
+            <ActionsMenu
+              label="Note actions"
+              items={[
+                {
+                  label: "Move context",
+                  icon: ArrowRightLeft,
+                  onSelect: () => setMoveOpen(true),
+                },
+                {
+                  label: "Delete",
+                  icon: Trash2,
+                  onSelect: () => setDeleteOpen(true),
+                  destructive: true,
+                },
+              ]}
+            />
+          </Show>
+          {/* Submits the form below (see onSubmit on <form>). Swaps to a
+              checkmark for a moment after a successful save (see
+              justSaved/handleSave above), then reverts to the save
+              icon. */}
+          <button
+            type="submit"
+            aria-label={saving() ? "Saving…" : "Save"}
+            class="icon-btn"
+            disabled={saving()}
+          >
+            <Show when={justSaved()} fallback={<Save size={22} />}>
+              <Check size={22} />
+            </Show>
+          </button>
+        </div>
       </div>
       <ProseKit editor={editor}>
         <div class="notes-editor">
@@ -324,9 +356,6 @@ function NoteForm(props) {
         </div>
       </ProseKit>
       {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
-      <Button type="submit" class="btn" disabled={saving()}>
-        {saving() ? "Saving…" : "Save"}
-      </Button>
       <Show when={noteId()}>
         <ComboboxDialog
           open={moveOpen()}
