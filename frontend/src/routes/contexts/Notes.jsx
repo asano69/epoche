@@ -247,7 +247,7 @@ export default function ContextNotes() {
         {/* "New note" is the first row in the list, styled and sized
             like the note rows below it so its full width acts as the
             click target instead of a small standalone icon button. */}
-        <div class="flex flex-col divide-y divide-border border-t border-border">
+        <div class="flex flex-col divide-y divide-border">
           {/* Hidden once today's note already exists (see hasTodayNote
               above), since this app allows only one note per day. When
               shown, it mirrors the note rows below (content column +

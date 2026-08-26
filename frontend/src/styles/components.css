@@ -13,7 +13,7 @@
          disabled:cursor-not-allowed disabled:opacity-40
          shadow-card
          border border-border bg-field text-text
-         enabled:hover:bg-hover-bg enabled:hover:border-hover-border
+         enabled:hover:bg-hover-bg
          enabled:active:bg-active-bg enabled:active:border-active-border;
   }
 

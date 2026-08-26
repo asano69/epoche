@@ -345,8 +345,8 @@ function NoteForm(props) {
             class="icon-btn"
             disabled={saving()}
           >
-            <Show when={justSaved()} fallback={<Save size={22} />}>
-              <Check size={22} />
+            <Show when={justSaved()} fallback={<Save size={24} />}>
+              <Check size={24} />
             </Show>
           </button>
         </div>

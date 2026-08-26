@@ -14,7 +14,15 @@
 ## Useage
 
 
-### Tech Stack
-- backend: Go+PocketBase v0.39+
-- frontend: solid.js + kobalte + tailwind v4
+## Tech Stack
+### backend
+- Go
+- PocketBase v0.39+
+
+### frontend
+- solid.js v1.9
+- kobalte v0.13+
+- tailwind v4
+- 
+
 
