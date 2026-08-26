@@ -39,9 +39,13 @@ export default function MainLayout(props) {
           onClose={() => setSidebarOpen(false)}
         />
 
-        {/* Main content */}
-        <main class="min-h-0 flex-1 overflow-y-auto">
-          <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Main content. flex flex-col lets a page that wants to fill
+            the remaining height (e.g. the note editor) do so via
+            flex-1, while pages with normal document flow (Home, the
+            notes list) are unaffected: they just grow past this height
+            and main's own overflow-y-auto still scrolls them. */}
+        <main class="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <div class="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
             {props.children}
           </div>
         </main>

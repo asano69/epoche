@@ -82,10 +82,9 @@ function NoteEditorView(props) {
   // components.css) so each preview's height matches its own content
   // instead of being padded out to the editor's size.
   return (
-    <div
-      ref={mountEditor}
-      class="ProseMirror notes-editor-content note-preview"
-    />
+    // No min-height here now that the shared class doesn't force one:
+    // this preview's height naturally matches its own content.
+    <div ref={mountEditor} class="ProseMirror notes-editor-content" />
   );
 }
 

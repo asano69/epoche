@@ -300,7 +300,10 @@ function NoteForm(props) {
   };
 
   return (
-    <form onSubmit={handleSave} class="flex w-full flex-col gap-4">
+    // min-h-0 lets this shrink to MainLayout's available height instead
+    // of growing to fit content, so the editor pane below can flex-1
+    // and scroll internally rather than the whole page scrolling.
+    <form onSubmit={handleSave} class="flex h-full min-h-0 w-full flex-col gap-4">
       <div class="flex items-center gap-3">
         {/* Back to this context's notes list. */}
         <A
@@ -311,28 +314,27 @@ function NoteForm(props) {
           <ArrowLeft size={24} />
         </A>
         <h1 class="font-serif text-3xl">{formatDisplayDate(props.date)}</h1>
-        {/* Pushes the actions menu and save button to the far right of
-            this row, regardless of whether the actions menu is shown. */}
+        {/* Move/delete only make sense for a note that already exists. */}
+        <Show when={noteId()}>
+          <ActionsMenu
+            label="Note actions"
+            items={[
+              {
+                label: "Move context",
+                icon: ArrowRightLeft,
+                onSelect: () => setMoveOpen(true),
+              },
+              {
+                label: "Delete",
+                icon: Trash2,
+                onSelect: () => setDeleteOpen(true),
+                destructive: true,
+              },
+            ]}
+          />
+        </Show>
+        {/* Pushes the save button to the far right of this row. */}
         <div class="ml-auto flex items-center gap-1">
-          {/* Move/delete only make sense for a note that already exists. */}
-          <Show when={noteId()}>
-            <ActionsMenu
-              label="Note actions"
-              items={[
-                {
-                  label: "Move context",
-                  icon: ArrowRightLeft,
-                  onSelect: () => setMoveOpen(true),
-                },
-                {
-                  label: "Delete",
-                  icon: Trash2,
-                  onSelect: () => setDeleteOpen(true),
-                  destructive: true,
-                },
-              ]}
-            />
-          </Show>
           {/* Submits the form below (see onSubmit on <form>). Swaps to a
               checkmark for a moment after a successful save (see
               justSaved/handleSave above), then reverts to the save
@@ -350,9 +352,16 @@ function NoteForm(props) {
         </div>
       </div>
       <ProseKit editor={editor}>
-        <div class="notes-editor">
+        {/* flex-1 min-h-0 makes this fill the remaining space in the
+            form (header row + error + this), instead of growing with
+            content. Toolbar keeps its natural height; the content div
+            below takes the rest and scrolls on its own. */}
+        <div class="notes-editor flex min-h-0 flex-1 flex-col">
           <Toolbar />
-          <div ref={mountEditor} class="ProseMirror notes-editor-content" />
+          <div
+            ref={mountEditor}
+            class="ProseMirror notes-editor-content min-h-0 flex-1 overflow-y-auto"
+          />
         </div>
       </ProseKit>
       {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}

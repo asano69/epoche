@@ -52,15 +52,6 @@
 
   .notes-editor-content {
     @apply rounded-b-md p-3 text-text outline-none;
-    min-height: 400px;
-  }
-
-  /* List previews (routes/contexts/Notes.jsx) reuse the editor's
-   * typography but must not inherit its fixed min-height: a preview's
-   * height should match its own content, not be padded out to the
-   * editor's size. */
-  .notes-editor-content.note-preview {
-    min-height: 0;
   }
 
   /* prosekit/basic/typography.css is tuned for a tight, block-based

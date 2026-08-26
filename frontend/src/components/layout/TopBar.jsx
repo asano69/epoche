@@ -59,7 +59,7 @@ export default function TopBar(props) {
         open={createOpen()}
         onOpenChange={setCreateOpen}
         title="New context"
-        label="Name"
+        label=""
         initialValue=""
         errorMessage="Failed to create the context."
         onSubmit={handleCreate}
