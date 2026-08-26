@@ -58,5 +58,13 @@ export default defineConfig({
   build: {
     outDir: "../internal/static/dist",
     emptyOutDir: true,
+    // Lightning CSS's minifier reorders same-specificity utility rules
+    // during optimization, which flips which rule wins the cascade.
+    // Tailwind v4 relies on source order to break specificity ties, so
+    // this broke Kobalte's menu background/border styles in production
+    // builds only (dev serves unminified CSS, so it never showed there).
+    // esbuild's minifier doesn't reorder rules, so it avoids the bug
+    // while still actually minifying the output (unlike cssMinify: false).
+    cssMinify: "esbuild",
   },
 });
