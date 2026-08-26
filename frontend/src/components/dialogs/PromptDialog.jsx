@@ -68,14 +68,14 @@ export default function PromptDialog(props) {
                 <TextField
                   value={value()}
                   onChange={setValue}
-                  class="flex flex-1 flex-col gap-1"
+                  class="flex min-w-0 flex-1 flex-col gap-1"
                 >
                   <TextField.Label class="text-sm text-text">
                     {props.label}
                   </TextField.Label>
                   <TextField.Input
                     autofocus
-                    class="rounded-md border border-border bg-bg px-3 py-2 text-text"
+                    class="w-full rounded-md border border-border bg-bg px-3 py-2 text-text"
                   />
                 </TextField>
                 <button

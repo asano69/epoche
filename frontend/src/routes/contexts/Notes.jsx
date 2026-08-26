@@ -219,7 +219,7 @@ export default function ContextNotes() {
             <ActionsMenu
               label="Context actions"
               items={[
-                { label: "Edit", icon: Pencil, onSelect: () => setEditOpen(true) },
+                { label: "Rename", icon: Pencil, onSelect: () => setEditOpen(true) },
                 {
                   label: "Delete",
                   icon: Trash2,
@@ -292,7 +292,7 @@ export default function ContextNotes() {
             open={editOpen()}
             onOpenChange={setEditOpen}
             title="Rename context"
-            label="Name"
+            label=""
             initialValue={context().context}
             errorMessage="Failed to rename the context."
             onSubmit={handleRename}
