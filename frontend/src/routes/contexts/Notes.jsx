@@ -110,6 +110,11 @@ export default function ContextNotes() {
   const [editOpen, setEditOpen] = createSignal(false);
   const [deleteOpen, setDeleteOpen] = createSignal(false);
 
+  // Only one note per context per day is allowed, so "New note" is
+  // hidden once today's note already exists in the loaded list.
+  const hasTodayNote = () =>
+    notes().some((note) => note.date === todayDate());
+
   // Set by the sentinel div's `ref` below; observed once mounted.
   let sentinel;
   let observer;
@@ -206,7 +211,7 @@ export default function ContextNotes() {
     // margin, so notes keep using the full width like before.
     <div class="flex xl:justify-center xl:gap-8">
       <div class="flex w-full flex-col gap-4 xl:max-w-3xl">
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 mb-4">
           <h1 class="font-sans text-4xl">{contextName()}</h1>
 
           {/* Rename/delete menu for this context, styled like TopBar's
@@ -243,14 +248,25 @@ export default function ContextNotes() {
             like the note rows below it so its full width acts as the
             click target instead of a small standalone icon button. */}
         <div class="flex flex-col divide-y divide-border border-t border-border">
-          <A
-            href={notePath(contextName(), todayDate())}
-            aria-label="New note"
-            class="flex items-center gap-2 py-4 pr-2 transition-colors hover:bg-hover-bg"
-          >
-            <Plus size={20} />
-            <span class="font-sans text-md">New note</span>
-          </A>
+          {/* Hidden once today's note already exists (see hasTodayNote
+              above), since this app allows only one note per day. When
+              shown, it mirrors the note rows below (content column +
+              right-aligned date column) instead of a plain icon row. */}
+          <Show when={!hasTodayNote()}>
+            <A
+              href={notePath(contextName(), todayDate())}
+              aria-label="New note"
+              class="flex flex-col-reverse gap-1 py-4 pr-2 transition-colors hover:bg-hover-bg sm:flex-row sm:items-start sm:gap-2"
+            >
+              <div class="flex min-w-0 flex-1 items-center gap-2  justify-center ">
+                <Plus size={20} />
+                <span class="font-sans text-md">New note</span>
+              </div>
+              <span class="w-28 shrink-0 whitespace-nowrap text-right text-md font-serif sm:shrink-0 sm:whitespace-nowrap sm:text-md">
+                {formatDisplayDate(todayDate())}
+              </span>
+            </A>
+          </Show>
           <For each={notes()}>
             {(note) => (
               <A
