@@ -1009,7 +1009,7 @@ func init() {
 						"max": 100,
 						"min": 0,
 						"name": "context",
-						"pattern": "^[a-zA-Z0-9]+$",
+						"pattern": "^[A-Za-z0-9._~-]+$",
 						"presentable": true,
 						"primaryKey": false,
 						"required": false,
