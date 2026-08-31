@@ -79,9 +79,10 @@ export default function Logo(props) {
       {icon}
       {title()}
     </Wrap>
-          {/* Rendered outside Wrap so it's never part of the clickable
-          logo (button/link). */}
-      <Show when={version()}>
+      {/* Rendered outside Wrap so it's never part of the clickable
+          logo (button/link). Only shown when showVersion is set (e.g.
+          TopBar hides it on mobile to save space), not by default. */}
+      <Show when={props.showVersion && version()}>
         <span class="font-mono text-xs">v{version()}</span>
       </Show>
     </div>
