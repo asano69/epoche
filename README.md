@@ -4,16 +4,14 @@
 
 <img src="frontend/public/favicon.svg" width="100" align="right" />
 
-- このプロジェクトの目的は、日記アプリをつくることです。
-- このアプリは、SPA＋CSRの個人向けのアプリです。
 
 ## Purpose
-
-
+- 個人用の日記あるいはジャーナルアプリ
+- 様々なプロジェクトの“CHANGELOGの"一元管理。
 ## Uses
 
-
 ## Tech Stack
+- 個人または小規模なチーム向けのCSR＋SPAアプリのための技術スタック
 ### backend
 - Go
 - PocketBase v0.39+
