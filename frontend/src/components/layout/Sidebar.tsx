@@ -1,9 +1,12 @@
 import { createSignal, createMemo, onMount, For, Show } from "solid-js";
 import { A } from "@solidjs/router";
 import { Search } from "@kobalte/core/search";
+import { Select } from "@kobalte/core/select";
 import SearchIcon from "lucide-solid/icons/search";
+import { ChevronDown, Check } from "../../lib/icons";
 
 import { projects, projectsLoaded, loadProjects } from "../../lib/projects";
+import { workspaces, loadWorkspaces } from "../../lib/workspaces";
 import Loading from "../Loading";
 
 export interface SidebarProps {
@@ -12,26 +15,53 @@ export interface SidebarProps {
   onClose: () => void;
 }
 
+interface WorkspaceOption {
+  id: string;
+  label: string;
+}
+
+// Sentinel representing "no workspace filter". No real workspace record
+// ever has an empty id, so this is safe to use as the default selection.
+const ALL_WORKSPACES_OPTION: WorkspaceOption = { id: "", label: "All" };
+
 // Visibility is fully controlled by `open`; no separate desktop/mobile
 // behavior.
 export default function Sidebar(props: SidebarProps) {
   const [query, setQuery] = createSignal("");
 
+  // Workspace currently selected in the dropdown above the search box.
+  // Defaults to "all workspaces" so the project list stays unfiltered by
+  // workspace until the user picks one. Only remembered for as long as
+  // Sidebar stays mounted (see the comment below), not persisted beyond
+  // that.
+  const [selectedWorkspace, setSelectedWorkspace] =
+    createSignal<WorkspaceOption>(ALL_WORKSPACES_OPTION);
+
   // Sidebar is always mounted (see MainLayout), so this is the one place
-  // that triggers the initial load of the shared projects store.
+  // that triggers the initial load of the shared projects/workspaces
+  // stores.
   onMount(() => {
     loadProjects();
+    loadWorkspaces();
   });
+
+  const workspaceOptions = createMemo(() => [
+    ALL_WORKSPACES_OPTION,
+    ...workspaces().map((w) => ({ id: w.id, label: w.label })),
+  ]);
 
   // Client-side filtering: Search's own options/suggestion machinery is
   // unused here (see options={[]} below), so this is what actually
-  // reacts to the typed query.
+  // reacts to the typed query. Workspace filtering happens first, then
+  // the text query narrows further within that result.
   const filteredProjects = createMemo(() => {
     const q = query().trim().toLowerCase();
-    if (!q) return projects();
-    return projects().filter((project) =>
-      project.label.toLowerCase().includes(q),
-    );
+    const workspaceId = selectedWorkspace().id;
+    return projects().filter((project) => {
+      if (workspaceId && project.workspace !== workspaceId) return false;
+      if (q && !project.label.toLowerCase().includes(q)) return false;
+      return true;
+    });
   });
 
   return (
@@ -50,7 +80,45 @@ export default function Sidebar(props: SidebarProps) {
         }}
         class="flex h-full min-h-0 w-64 flex-col border-r border-border bg-bg"
       >
-        <div class="p-3">
+        <div class="flex flex-col gap-2 p-3">
+          {/* Filters the project list below by workspace. "All" (the
+              default) shows every project regardless of workspace. */}
+          <Select<WorkspaceOption>
+            options={workspaceOptions()}
+            optionValue="id"
+            optionTextValue="label"
+            optionLabel="label"
+            value={selectedWorkspace()}
+            onChange={(option) => option && setSelectedWorkspace(option)}
+            itemComponent={(itemProps) => (
+              <Select.Item
+                item={itemProps.item}
+                class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-text outline-none transition-colors hover:bg-hover-bg data-[highlighted]:bg-hover-bg"
+              >
+                <Select.ItemLabel class="flex-1">
+                  {itemProps.item.rawValue.label}
+                </Select.ItemLabel>
+                <Select.ItemIndicator>
+                  <Check size={16} />
+                </Select.ItemIndicator>
+              </Select.Item>
+            )}
+          >
+            <Select.Trigger class="flex items-center justify-between gap-2 rounded-md border border-border bg-field px-3 py-2 text-sm text-text">
+              <Select.Value<WorkspaceOption>>
+                {(state) => state.selectedOption().label}
+              </Select.Value>
+              <Select.Icon class="text-border">
+                <ChevronDown size={16} />
+              </Select.Icon>
+            </Select.Trigger>
+            <Select.Portal>
+              <Select.Content class="z-50 min-w-[160px] rounded-md border border-border bg-card p-1 shadow-popover outline-none font-sans">
+                <Select.Listbox class="max-h-60 overflow-y-auto" />
+              </Select.Content>
+            </Select.Portal>
+          </Select>
+
           {/* options stays empty and no Search.Portal/Content/Listbox is
               rendered: this only borrows Search's Control/Icon/Input
               parts for styling. onInputChange drives the plain list

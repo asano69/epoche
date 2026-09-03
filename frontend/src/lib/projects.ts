@@ -5,6 +5,7 @@ export interface ProjectRecord {
   id: string;
   label: string;
   description: string;
+  workspace: string; // relation id, points at the "workspaces" collection
   created: string;
   updated: string;
 }
