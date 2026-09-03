@@ -1,5 +1,6 @@
 import { createSignal, createEffect, onMount, on, For, Show } from "solid-js";
 import * as d3 from "d3";
+import dagre from "@dagrejs/dagre";
 
 const NODE_WIDTH = 140;
 const NODE_HEIGHT = 48;
@@ -35,32 +36,34 @@ interface PositionedNode extends GraphNode {
   y: number;
 }
 
-// Runs a d3-force simulation to completion synchronously (instead of
-// animating it frame by frame) to get a one-off initial layout. Once
-// this returns, node positions are just plain numbers in a signal,
-// moved only by the user's own drags -- there is no ongoing physics
-// loop to reason about.
+// Runs dagre's layered layout algorithm to compute a one-off initial
+// layout for the DAG of derivation relations. Unlike a generic force
+// simulation, dagre is built specifically for directed graphs, so
+// edges consistently point left-to-right, which reads naturally as
+// "derived from". Once this returns, node positions are just plain
+// numbers in a signal, moved only by the user's own drags -- there is
+// no ongoing layout loop to reason about.
 function computeLayout(nodes: GraphNode[], edges: GraphEdge[]): PositionedNode[] {
-  const simNodes = nodes.map((n) => ({ ...n, x: 0, y: 0 }));
-  // Cloned so that forceLink mutating .source/.target into node
-  // references doesn't corrupt props.edges, which this component
-  // keeps reading elsewhere (edgePath, click-to-delete) as plain
-  // source/target id strings.
-  const simEdges = edges.map((e) => ({ ...e }));
-  const simulation = d3
-    .forceSimulation(simNodes as any)
-    .force(
-      "link",
-      d3
-        .forceLink(simEdges as any)
-        .id((d: any) => d.id)
-        .distance(160),
-    )
-    .force("charge", d3.forceManyBody().strength(-400))
-    .force("center", d3.forceCenter(400, 300))
-    .stop();
-  for (let i = 0; i < 300; i++) simulation.tick();
-  return simNodes as PositionedNode[];
+  const graph = new dagre.graphlib.Graph();
+  graph.setGraph({ rankdir: "LR", nodesep: 40, ranksep: 100 });
+  graph.setDefaultEdgeLabel(() => ({}));
+
+  for (const node of nodes) {
+    graph.setNode(node.id, { width: NODE_WIDTH, height: NODE_HEIGHT });
+  }
+  for (const edge of edges) {
+    graph.setEdge(edge.source, edge.target);
+  }
+
+  dagre.layout(graph);
+
+  // dagre positions each node by its center; the rest of this
+  // component (edgePath, node rendering) works in top-left
+  // coordinates, so the offset is subtracted here once.
+  return nodes.map((node) => {
+    const { x, y } = graph.node(node.id);
+    return { ...node, x: x - NODE_WIDTH / 2, y: y - NODE_HEIGHT / 2 };
+  });
 }
 
 // Network graph of projects (nodes) and their derivation relations
@@ -171,13 +174,13 @@ export default function GraphCanvas(props: GraphCanvasProps) {
     window.addEventListener("pointerup", handleUp);
   };
 
-  // Draws a straight line between node centers, shortened near the
-  // target so the arrowhead marker lands exactly on that node's
+  // Draws a smooth cubic bezier between node centers, shortened near
+  // the target so the arrowhead marker lands exactly on that node's
   // rectangular edge instead of being hidden underneath it (or, at
   // steep angles, stopping short and leaving a gap). The source end
   // is left at the node's center on purpose: nodes are drawn after
   // edges (see the <For each={positioned()}> block below), so the
-  // portion of the line inside the source rectangle is already
+  // portion of the curve inside the source rectangle is already
   // covered up.
   const edgePath = (edge: GraphEdge) => {
     const source = nodeById(edge.source);
@@ -210,7 +213,19 @@ export default function GraphCanvas(props: GraphCanvasProps) {
       targetCenter[1] - dy * scale,
     ];
 
-    return d3.line()([sourceCenter, targetEdge]) ?? "";
+    // Control points are pulled halfway along the horizontal distance
+    // between the two endpoints, so the curve leaves the source and
+    // enters the target roughly horizontally -- the familiar "S-curve"
+    // shape used by most flow-chart/node-editor connections, and a
+    // natural fit for the left-to-right rankdir the layout uses.
+    const controlOffset = Math.abs(targetEdge[0] - sourceCenter[0]) / 2;
+    const c1: [number, number] = [
+      sourceCenter[0] + controlOffset,
+      sourceCenter[1],
+    ];
+    const c2: [number, number] = [targetEdge[0] - controlOffset, targetEdge[1]];
+
+    return `M${sourceCenter[0]},${sourceCenter[1]} C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${targetEdge[0]},${targetEdge[1]}`;
   };
 
   return (
