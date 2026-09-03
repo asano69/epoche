@@ -1094,6 +1094,20 @@ func init() {
 						"type": "text"
 					},
 					{
+						"cascadeDelete": false,
+						"collectionId": "pbc_2170078043",
+						"help": "",
+						"hidden": false,
+						"id": "relation2375286809",
+						"maxSelect": 0,
+						"minSelect": 0,
+						"name": "workspace",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
 						"autogeneratePattern": "",
 						"help": "",
 						"hidden": false,
@@ -1122,20 +1136,6 @@ func init() {
 						"required": false,
 						"system": false,
 						"type": "text"
-					},
-					{
-						"cascadeDelete": false,
-						"collectionId": "pbc_2170078043",
-						"help": "",
-						"hidden": false,
-						"id": "relation2375286809",
-						"maxSelect": 0,
-						"minSelect": 0,
-						"name": "workspace",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "relation"
 					},
 					{
 						"help": "",
