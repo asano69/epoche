@@ -1264,6 +1264,35 @@ func init() {
 						"type": "text"
 					},
 					{
+						"cascadeDelete": true,
+						"collectionId": "pbc_484305853",
+						"help": "",
+						"hidden": false,
+						"id": "relation800313582",
+						"maxSelect": 0,
+						"minSelect": 0,
+						"name": "project",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"autogeneratePattern": "",
+						"help": "",
+						"hidden": false,
+						"id": "text2862495610",
+						"max": 0,
+						"min": 0,
+						"name": "date",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": true,
+						"system": false,
+						"type": "text"
+					},
+					{
 						"autogeneratePattern": "",
 						"help": "",
 						"hidden": false,
@@ -1279,18 +1308,19 @@ func init() {
 						"type": "text"
 					},
 					{
-						"cascadeDelete": true,
-						"collectionId": "pbc_484305853",
+						"autogeneratePattern": "",
 						"help": "",
 						"hidden": false,
-						"id": "relation800313582",
-						"maxSelect": 0,
-						"minSelect": 0,
-						"name": "project",
+						"id": "text1843675174",
+						"max": 0,
+						"min": 0,
+						"name": "description",
+						"pattern": "",
 						"presentable": false,
+						"primaryKey": false,
 						"required": false,
 						"system": false,
-						"type": "relation"
+						"type": "text"
 					},
 					{
 						"hidden": false,
@@ -1316,7 +1346,7 @@ func init() {
 				"id": "pbc_2484833797",
 				"indexes": [],
 				"listRule": null,
-				"name": "actions",
+				"name": "activities",
 				"system": false,
 				"type": "base",
 				"updateRule": null,
