@@ -1,23 +1,10 @@
-import { For, Show } from "solid-js";
+import { createSignal, createMemo, onMount, For, Show } from "solid-js";
 import { A } from "@solidjs/router";
+import { Search } from "@kobalte/core/search";
+import SearchIcon from "lucide-solid/icons/search";
 
-import { Cone as Focus, Notebook } from "../../lib/icons";
-
-import { useVersion } from "../../lib/version";
-
-interface NavItem {
-  href: string;
-  label: string;
-  icon: typeof Focus;
-}
-
-// Static top-level nav items, in the order they're shown. Kept as plain
-// data so each entry is just a {href, label, icon} tuple instead of
-// duplicating the same <A> markup per page.
-const NAV_ITEMS: NavItem[] = [
-  { href: "/focus", label: "Focus", icon: Focus },
-  { href: "/diary", label: "Diary", icon: Notebook },
-];
+import { contexts, contextsLoaded, loadContexts } from "../../lib/contexts";
+import Loading from "../Loading";
 
 export interface SidebarProps {
   isMobile: boolean;
@@ -25,64 +12,93 @@ export interface SidebarProps {
   onClose: () => void;
 }
 
+// Visibility is fully controlled by `open`; no separate desktop/mobile
+// behavior.
 export default function Sidebar(props: SidebarProps) {
-  const version = useVersion();
+  const [query, setQuery] = createSignal("");
+
+  // Sidebar is always mounted (see MainLayout), so this is the one place
+  // that triggers the initial load of the shared contexts store. Once
+  // loaded, create/rename/delete elsewhere in the app keep it in sync
+  // without Sidebar needing to re-fetch.
+  onMount(() => {
+    loadContexts();
+  });
+
+  // Client-side filtering: Search's own options/suggestion machinery is
+  // unused here (see options={[]} below), so this is what actually
+  // reacts to the typed query.
+  const filteredContexts = createMemo(() => {
+    const q = query().trim().toLowerCase();
+    if (!q) return contexts();
+    return contexts().filter((context) =>
+      context.context.toLowerCase().includes(q),
+    );
+  });
 
   return (
-    <>
-      {/* Overlay only exists on mobile, where the sidebar floats above
-          the page instead of sitting in the flex layout. Kept mounted
-          while isMobile stays true so its opacity can transition
-          in/out instead of popping in/out with the sidebar. */}
+    <Show when={props.open}>
+      {/* Backdrop only exists on mobile: clicking it closes the overlay,
+          and it visually separates the sidebar from the content behind it. */}
       <Show when={props.isMobile}>
         <div
-          class="absolute inset-0 z-20 bg-black/40 transition-opacity duration-200"
-          classList={{ "pointer-events-none opacity-0": !props.open }}
-          onClick={() => props.onClose()}
+          class="absolute inset-0 z-20 bg-black/40"
+          onClick={props.onClose}
         />
       </Show>
-
-      {/* Always mounted (not conditionally rendered via <Show>) so the
-          transform transition below actually animates open <-> closed
-          instead of the element just appearing/disappearing. On mobile
-          it's translated off-screen when closed; on desktop `open` is
-          always true (see MainLayout), so it never moves. */}
       <aside
-        aria-hidden={props.isMobile && !props.open}
         classList={{
-          "absolute inset-y-0 left-0 z-30": props.isMobile,
-          // Shadow only while actually visible: it's dropped entirely
-          // once closed instead of just relying on -translate-x-full to
-          // carry it off-screen, since the shadow's blur radius would
-          // otherwise still bleed a few pixels into the viewport from
-          // just past the left edge.
-          "shadow-popover": props.isMobile && props.open,
-          "-translate-x-full": props.isMobile && !props.open,
+          "absolute inset-y-0 left-0 z-30 shadow-popover": props.isMobile,
         }}
-        class="flex h-full min-h-0 w-64 flex-col border-r border-border bg-bg transition-transform duration-200 ease-in-out"
+        class="flex h-full min-h-0 w-64 flex-col border-r border-border bg-bg"
       >
-        <nav class="p-2 text-md">
-          <For each={NAV_ITEMS}>
-            {(item) => (
-              <A
-                href={item.href}
-                end
-                activeClass="bg-active-bg"
-                class="flex items-center gap-2 rounded-md px-2 py-2.5 text-text transition-colors hover:bg-hover-bg"
-              >
-                <item.icon size={20} />
-                {item.label}
-              </A>
-            )}
-          </For>
-        </nav>
+        <div class="p-3">
+          {/* options stays empty and no Search.Portal/Content/Listbox is
+              rendered: this only borrows Search's Control/Icon/Input
+              parts for styling. onInputChange drives the plain list
+              below instead of Search's built-in suggestion dropdown. */}
+          <Search
+            options={[]}
+            triggerMode="manual"
+            placeholder="Search contexts…"
+            onInputChange={setQuery}
+          >
+            <Search.Control class="flex items-center gap-2 rounded-md border border-border bg-field px-3 py-2">
+              <Search.Icon class="text-border">
+                <SearchIcon size={16} />
+              </Search.Icon>
+              <Search.Input class="w-full bg-transparent text-sm text-text outline-none" />
+            </Search.Control>
+          </Search>
+        </div>
 
-        {/* mt-auto pins this to the bottom of the sidebar regardless of
-            how tall the nav list above ends up being. */}
-        <footer class="mt-auto p-2 text-border font-mono text-xs">
-          <Show when={version()}>v{version()}</Show>
-        </footer>
+        {/* Scrolls independently of MainLayout's <main>: this nav owns
+            its own overflow-y-auto within the fixed-height <aside>
+            (h-full, bounded by MainLayout's min-h-0 flex row). */}
+        <nav class="flex-1 overflow-y-auto p-2">
+          <Show when={contextsLoaded()} fallback={<Loading />}>
+            <Show
+              when={filteredContexts().length > 0}
+              fallback={
+                <p class="px-2 py-1.5 text-sm text-border">
+                  No contexts found.
+                </p>
+              }
+            >
+              <For each={filteredContexts()}>
+                {(context) => (
+                  <A
+                    href={`/contexts/${encodeURIComponent(context.context)}`}
+                    class="block rounded-md px-2 py-1.5 text-md text-text transition-colors hover:bg-hover-bg"
+                  >
+                    {context.context}
+                  </A>
+                )}
+              </For>
+            </Show>
+          </Show>
+        </nav>
       </aside>
-    </>
+    </Show>
   );
 }

@@ -1,5 +1,6 @@
-import { Show } from "solid-js";
-import { Menu, X } from "../../lib/icons";
+import { For, Show } from "solid-js";
+import { A } from "@solidjs/router";
+import { Menu, X, Cone as Focus, Notebook } from "../../lib/icons";
 import Logo from "../Logo";
 
 import ThemeToggle from "./ThemeToggle";
@@ -10,6 +11,15 @@ export interface TopBarProps {
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
 }
+
+// Top-level nav items, moved here from Sidebar (which now shows the
+// context list instead of these static links). Kept as plain data so
+// each entry is just a {href, label, icon} tuple instead of
+// duplicating the same <A> markup.
+const NAV_ITEMS = [
+  { href: "/focus", label: "Focus", icon: Focus },
+  { href: "/diary", label: "Diary", icon: Notebook },
+];
 
 // The hamburger button here only toggles the Sidebar (owned by
 // MainLayout, passed in as sidebarOpen/onToggleSidebar). There is no
@@ -38,6 +48,19 @@ export default function TopBar(props: TopBarProps) {
         </div>
 
         <nav class="flex items-center gap-1">
+          <For each={NAV_ITEMS}>
+            {(item) => (
+              <A
+                href={item.href}
+                end
+                activeClass="bg-active-bg"
+                aria-label={item.label}
+                class="icon-btn"
+              >
+                <item.icon size={22} />
+              </A>
+            )}
+          </For>
           <ThemeToggle />
           <UserMenu />
         </nav>
