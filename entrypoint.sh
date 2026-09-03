@@ -6,12 +6,19 @@ if [ -d "/certs" ] && [ "$(ls -A /certs/*.crt 2>/dev/null)" ]; then
   update-ca-certificates
 fi
 
-# Bootstrap: create the first superuser if one doesn't exist yet.
+# Bootstrap: create the first superuser only on the very first startup.
+# "pb_data/data.db" only exists once PocketBase has run at least once,
+# so its absence means this is a fresh volume. Skipping "create" once
+# it exists avoids "email: Value must be unique" on every restart,
+# without resorting to "upsert", which would silently reset any
+# password the user has since changed via the UI.
 # Throwaway credential meant to be rotated via the UI right after first login.
 ADMIN_EMAIL="${INITIAL_ADMIN_EMAIL:-admin@mail.internal}"
 ADMIN_PASSWORD="${INITIAL_ADMIN_PASSWORD:-password}"
+DATA_DIR="${KAIROS_DATA_DIR:-pb_data}"
 
-# /kairos/pb_data
-su-exec kairos:kairos kairos superuser create "$ADMIN_EMAIL" "$ADMIN_PASSWORD" || true
+if [ ! -f "$DATA_DIR/data.db" ]; then
+  su-exec kairos:kairos kairos superuser create "$ADMIN_EMAIL" "$ADMIN_PASSWORD"
+fi
 
 exec su-exec kairos:kairos "$@"

@@ -1,9 +1,9 @@
-import { createSignal } from "solid-js";
+import { createSignal, type ParentProps } from "solid-js";
 import TopBar from "./TopBar";
 import Sidebar from "./Sidebar";
 import { createIsMobile } from "../../lib/mediaQuery";
 
-export default function MainLayout(props) {
+export default function MainLayout(props: ParentProps) {
   // Whether the viewport is currently mobile-sized. Drives both the
   // toggle button's visibility (TopBar) and the sidebar's overlay vs.
   // always-visible behavior (Sidebar).
@@ -45,7 +45,7 @@ export default function MainLayout(props) {
             notes list) are unaffected: they just grow past this height
             and main's own overflow-y-auto still scrolls them. */}
         <main class="flex min-h-0 flex-1 flex-col overflow-y-auto">
-          <div class="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
+          <div class="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
             {props.children}
           </div>
         </main>

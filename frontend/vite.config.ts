@@ -1,5 +1,5 @@
-// frontend/vite.config.js
-import { defineConfig } from "vite";
+// frontend/vite.config.ts
+import { defineConfig, type Plugin } from "vite";
 import solid from "vite-plugin-solid";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -8,6 +8,16 @@ import tailwindcss from "@tailwindcss/vite";
 // be resolved once. Backed by the same APP_NAME the Go backend reads
 // (see kairos.env), so both sides agree without duplicating the value.
 const appName = process.env.APP_NAME;
+
+// index.html isn't JS, so Vite's `define` (below) can't reach it;
+// this replaces the %APP_NAME% placeholder at build/serve time
+// instead, without widening envPrefix to expose non-VITE_ vars.
+const injectAppNameHtml: Plugin = {
+  name: "inject-app-name-html",
+  transformIndexHtml(html) {
+    return html.replace(/%APP_NAME%/g, appName ?? "");
+  },
+};
 
 export default defineConfig({
   optimizeDeps: {
@@ -25,19 +35,7 @@ export default defineConfig({
       "prosekit/extensions/readonly",
     ],
   },
-  plugins: [
-    solid(),
-    tailwindcss(),
-    {
-      // index.html isn't JS, so Vite's `define` (below) can't reach it;
-      // this replaces the %APP_NAME% placeholder at build/serve time
-      // instead, without widening envPrefix to expose non-VITE_ vars.
-      name: "inject-app-name-html",
-      transformIndexHtml(html) {
-        return html.replace(/%APP_NAME%/g, appName);
-      },
-    },
-  ],
+  plugins: [solid(), tailwindcss(), injectAppNameHtml],
   // __APP_NAME__ is a build-time constant (not a runtime env var), so it
   // can be referenced anywhere in src/ without an import.
   define: {

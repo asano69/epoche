@@ -1,8 +1,19 @@
 import { createSignal, createEffect } from "solid-js";
 import { Dialog } from "@kobalte/core/dialog";
 import { TextField } from "@kobalte/core/text-field";
-import X from "lucide-solid/icons/x";
-import Check from "lucide-solid/icons/check";
+import { X, Check } from "../../lib/icons";
+
+export interface PromptDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  label: string;
+  initialValue?: string;
+  onSubmit: (value: string) => Promise<void>;
+  submitLabel?: string;
+  submittingLabel?: string;
+  errorMessage?: string;
+}
 
 // Reusable single-field "edit" dialog: a label, a text field, and an
 // inline checkmark button to save (mirrors ComboboxDialog's layout, no
@@ -11,10 +22,7 @@ import Check from "lucide-solid/icons/check";
 // `open`/`onOpenChange` so it can be opened from anywhere (e.g. a
 // dropdown menu item) instead of needing its own Dialog.Trigger next to
 // it.
-//
-// Props: open, onOpenChange, title, label, initialValue, onSubmit
-// (async (value) => void), submitLabel, submittingLabel, errorMessage.
-export default function PromptDialog(props) {
+export default function PromptDialog(props: PromptDialogProps) {
   const [value, setValue] = createSignal(props.initialValue ?? "");
   const [submitting, setSubmitting] = createSignal(false);
   const [error, setError] = createSignal("");
@@ -29,7 +37,7 @@ export default function PromptDialog(props) {
     }
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     setError("");
     setSubmitting(true);

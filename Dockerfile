@@ -1,23 +1,21 @@
 # syntax=docker/dockerfile:1
 
 # ==========================================
-# Stage 0: Node (vendor frontend assets via npm)
+# Stage 0: Bun (vendor frontend assets)
 # ==========================================
-FROM node:22-alpine AS node-builder
+FROM oven/bun:1-alpine AS node-builder
 # Passed through to vite.config.js's `define` at build time; defaults to
 # "kairos" to match the Go backend's default (see internal/config).
-ARG APP_NAME=Kairos
+ARG APP_NAME=MyApp
 ENV APP_NAME=${APP_NAME}
 WORKDIR /build/frontend
 # Copy only dependency manifests first to leverage Docker layer caching
-COPY frontend/package.json frontend/pnpm-lock.yaml* frontend/pnpm-workspace.yaml* ./
-RUN corepack enable
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm install
+COPY frontend/package.json frontend/bun.lock* ./
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install --frozen-lockfile
 # Copy the rest of the frontend source code and build
 COPY frontend/ ./
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm run build
+RUN bun run build
 
 # ==========================================
 # Stage 1: Go Builder

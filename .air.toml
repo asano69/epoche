@@ -6,9 +6,9 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-args_bin = ["serve", "--dir=./pb_data", "--dev"]
+args_bin = ["serve", "--dir=${KAIROS_DATA_DIR}", "--dev"]
 bin = "./tmp/main"
-cmd = "go build -o ./tmp/main ./cmd/epoche"
+cmd = "go build -o ./tmp/main ./cmd/kairos"
 clean_on_exit = true
 delay = 1000
 entrypoint = ["./tmp/main"]

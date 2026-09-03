@@ -1,19 +1,31 @@
 import { For } from "solid-js";
 import { DropdownMenu } from "@kobalte/core/dropdown-menu";
-import Ellipsis from "lucide-solid/icons/ellipsis";
+import { Ellipsis } from "../../lib/icons";
+
+export interface ActionsMenuItem {
+  label: string;
+  icon: typeof Ellipsis;
+  onSelect: () => void;
+  destructive?: boolean;
+}
+
+export interface ActionsMenuProps {
+  // aria-label for the trigger button (defaults to "Actions")
+  label?: string;
+  items: ActionsMenuItem[];
+}
 
 // Reusable "..." dropdown menu: an icon-button trigger plus a list of
 // action items. Several pages need a small overflow menu (context list
 // actions, note actions, ...); this keeps the DropdownMenu markup and
 // styling in one place instead of duplicating it per page.
-//
-// Props:
-//   label: aria-label for the trigger button (defaults to "Actions")
-//   items: [{ label, icon, onSelect, destructive }]
-export default function ActionsMenu(props) {
+export default function ActionsMenu(props: ActionsMenuProps) {
   return (
     <DropdownMenu>
-      <DropdownMenu.Trigger aria-label={props.label ?? "Actions"} class="icon-btn">
+      <DropdownMenu.Trigger
+        aria-label={props.label ?? "Actions"}
+        class="icon-btn"
+      >
         <Ellipsis size={24} />
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>

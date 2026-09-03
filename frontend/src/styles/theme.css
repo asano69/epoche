@@ -9,16 +9,14 @@
 @theme {
   --font-sans: system-ui, "Inter", -apple-system, sans-serif;
   --font-serif: "TeX Gyre Termes", "Nimbus Roman No9 L", Georgia, serif;
-  /* Used for note dates (see routes/notes/Editor.jsx and
-   * routes/contexts/Notes.jsx). Weight 500 (see font-semibold on those
-   * elements) is the only weight loaded, see main.jsx. */
+
   --font-display: "Fraunces", "TeX Gyre Termes", Georgia, serif;
 
   --color-bg: light-dark(#ffffff, #1e1f20);
   --color-text: light-dark(#000000, #e0e0e0);
   --color-panel: light-dark(#f8f8f8, #252525);
   --color-surface: light-dark(#fcfcfc, #1e1e1e);
-  --color-card: light-dark(#ffffff, #2a2a2a);
+  --color-card: light-dark(#f8f8f8, #2a2a2a);
   --color-field: light-dark(#ffffff, #333333);
   --color-border: light-dark(#d0d7de, #46494f);
   --color-hover-bg: light-dark(#f0f0f0, #3a3a3a);
@@ -29,6 +27,20 @@
    * A dedicated role token, not a literal color name, so it stays
    * correct if the actual color is swapped in either light or dark. */
   --color-nav: light-dark(#f6f7fa, #1a1b1e);
+
+  /* Focus heatmap cell colors (see components/focus/FocusHeatmap.tsx).
+   * --color-heat-empty is the "no tasks created" background, matching
+   * GitHub's own neutral (not transparent) empty-cell color. 0% is
+   * red; 33/50/66/100% form a blue gradient that gets darker (more
+   * saturated) as the rate rises. Dark mode uses brighter stops for
+   * the higher rates instead of literally darker ones, since a
+   * near-black blue would disappear against a dark background. */
+  --color-heat-empty: light-dark(#ebedf0, #2a313c);
+  --color-heat-0: light-dark(#cc0000, #7f1d1d);
+  --color-heat-33: light-dark(#aceebb, #1b4721);
+  --color-heat-50: light-dark(#4ac26b, #2b6a30);
+  --color-heat-66: light-dark(#2da44e, #46954a);
+  --color-heat-100: light-dark(#116329, #6bc46d);
 
   /* Reusable box-shadow presets, modeled on GitHub Primer's shadow
    * scale: low-opacity black, tight offsets/blur. The border color

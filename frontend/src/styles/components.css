@@ -19,7 +19,7 @@
 
   /* ProseKit ships without a UI, so the toolbar and editable area are
    * styled here instead of a vendor/ override file. ProseKit's own
-   * prosekit/basic/style.css (imported in Editor.jsx) handles the
+   * prosekit/basic/style.css (imported in Editor.tsx) handles the
    * inner typography and targets the "ProseMirror" class, which is why
    * that class is applied directly to notes-editor-content below. */
   .notes-editor {
@@ -51,7 +51,7 @@
   }
 
   .notes-editor-content {
-    @apply rounded-b-md p-3 text-text outline-none;
+    @apply p-3 pb-10 text-text outline-none;
   }
 
   /* prosekit/basic/typography.css is tuned for a tight, block-based
@@ -76,5 +76,15 @@
 
   .notes-editor-content.ProseMirror blockquote {
     margin: 0.75em 0;
+  }
+
+  /* Cell for the generic Heatmap component (see
+   * components/common/Heatmap.tsx). Background color is set inline
+   * per-cell by the caller, not here, so it always applies regardless
+   * of Tailwind's cascade layer ordering. No border, just a flat fill,
+   * matching GitHub's own contribution graph. Sized to match GitHub's
+   * own cells (~10px). */
+  .heat-cell {
+    @apply h-3 w-3 shrink-0 cursor-pointer rounded-[2px] transition-colors;
   }
 }

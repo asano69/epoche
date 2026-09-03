@@ -1,46 +1,55 @@
 import { createSignal, createEffect } from "solid-js";
 import { Dialog } from "@kobalte/core/dialog";
 import { Combobox } from "@kobalte/core/combobox";
-import X from "lucide-solid/icons/x";
-import Check from "lucide-solid/icons/check";
-import ChevronDown from "lucide-solid/icons/chevron-down";
+import { X, Check, ChevronDown } from "../../lib/icons";
 
-// Reusable single-field "pick one from a list" dialog: a label, a
-// searchable combobox, and Cancel/Save buttons. Mirrors PromptDialog's
-// API (open/onOpenChange/onSubmit) so the two dialogs can be swapped
-// for each other wherever a single-field form is needed.
-//
-// Props: open, onOpenChange, title, label, options (list of items),
-// optionValue, optionLabel (field names read off each option),
-// placeholder, initialValue, onSubmit (async (option) => void, receives
-// the full selected option), submitLabel, submittingLabel, errorMessage.
-export default function ComboboxDialog(props) {
-  const [value, setValue] = createSignal(null);
+export interface ComboboxDialogProps<T extends Record<string, unknown>> {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  label: string;
+  options: T[];
+  optionValue: keyof T & string;
+  optionLabel: keyof T & string;
+  placeholder?: string;
+  initialValue?: T | null;
+  onSubmit: (option: T) => Promise<void>;
+  submitLabel?: string;
+  submittingLabel?: string;
+  errorMessage?: string;
+}
+
+export default function ComboboxDialog<T extends Record<string, unknown>>(
+  props: ComboboxDialogProps<T>,
+) {
+  const [value, setValue] = createSignal<T | null>(null);
   const [submitting, setSubmitting] = createSignal(false);
   const [error, setError] = createSignal("");
 
-  // This component stays mounted across opens/closes (only its Dialog
-  // content mounts/unmounts internally), so the selection has to be
-  // reset explicitly every time it opens.
   createEffect(() => {
     if (props.open) {
-      setValue(props.initialValue ?? null);
+      // Wrapped in a function form: T could in principle overlap with
+      // Solid's "updater function" overload from the setter's point of
+      // view, so passing the value directly trips its overload
+      // resolution. The functional form (prev) => value sidesteps that.
+      setValue(() => props.initialValue ?? null);
       setError("");
     }
   });
 
-  const handleOpenChange = (open) => {
+  const handleOpenChange = (open: boolean) => {
     if (!open) setError("");
     props.onOpenChange(open);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
-    if (!value()) return;
+    const selected = value();
+    if (!selected) return;
     setError("");
     setSubmitting(true);
     try {
-      await props.onSubmit(value());
+      await props.onSubmit(selected);
       props.onOpenChange(false);
     } catch {
       setError(props.errorMessage ?? "Failed to save.");
@@ -67,11 +76,8 @@ export default function ComboboxDialog(props) {
               </Dialog.CloseButton>
             </div>
             <form onSubmit={handleSubmit} class="flex flex-col gap-4">
-              {/* Combobox and confirm button share one row: no separate
-                  full-width "Save" button anymore, just a check icon
-                  button right next to the combobox. */}
               <div class="flex items-end gap-2">
-                <Combobox
+                <Combobox<T>
                   options={props.options}
                   optionValue={props.optionValue}
                   optionLabel={props.optionLabel}
@@ -85,7 +91,7 @@ export default function ComboboxDialog(props) {
                       class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-text outline-none data-[highlighted]:bg-hover-bg"
                     >
                       <Combobox.ItemLabel>
-                        {itemProps.item.rawValue[props.optionLabel]}
+                        {String(itemProps.item.rawValue[props.optionLabel])}
                       </Combobox.ItemLabel>
                     </Combobox.Item>
                   )}

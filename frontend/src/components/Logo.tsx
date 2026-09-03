@@ -1,25 +1,34 @@
-import { createResource, Show } from "solid-js";
+import { Show, type ParentProps } from "solid-js";
 import { A } from "@solidjs/router";
 
-// size: overall pixel size of the icon (width == height). Defaults to
-// 40px (the old fixed "h-10 w-10" Tailwind size).
-// showTitle: whether to render "App Title" next to the icon.
-// linkable: whether clicking the logo navigates home ("/"). Defaults to
-// false, since Login renders pre-auth where there's nowhere to navigate
-// to yet -- it uses Logo without linkable and gets plain text/icon.
-// onClick: if provided, the logo becomes a plain clickable button
-// instead of a link, and `linkable` is ignored.
-export default function Logo(props) {
-  // Fetches the running server version from the public, unauthenticated
-  // /api/version endpoint (see internal/serve/handler.go), instead of
-  // hardcoding it here.
-  const [version] = createResource(async () => {
-    const res = await fetch("/api/version");
-    const data = await res.json();
-    return data.version;
-  });
+import { useVersion } from "../lib/version";
+
+export interface LogoProps {
+  // Overall pixel size of the icon (width == height). Defaults to 30px.
+  size?: number;
+  // Whether to render "App Title" next to the icon.
+  showTitle?: boolean;
+  // Whether to show the running server version next to the title.
+  showVersion?: boolean;
+  // Whether clicking the logo navigates home ("/"). Defaults to false,
+  // since Login renders pre-auth where there's nowhere to navigate to
+  // yet -- it uses Logo without linkable and gets plain text/icon.
+  linkable?: boolean;
+  // If provided, the logo becomes a plain clickable button instead of
+  // a link, and `linkable` is ignored.
+  onClick?: () => void;
+}
+
+export default function Logo(props: LogoProps) {
+  // Shared with Sidebar's footer (see lib/version.ts), so both display
+  // the same value from one fetch implementation.
+  const version = useVersion();
 
   const size = () => props.size ?? 30;
+  // Scales with the icon: at the old default size (40px), this works
+  // out to 24px, matching the previous fixed "text-2xl" class.
+  const titleFontSize = () => size() * 0.6;
+
   const icon = (
     // stroke uses currentColor instead of a fixed hex, so the icon
     // follows whatever text color is in scope. Since body already sets
@@ -42,9 +51,7 @@ export default function Logo(props) {
       />
     </svg>
   );
-  // Scales with the icon: at the old default size (40px), this works
-  // out to 24px, matching the previous fixed "text-2xl" class.
-  const titleFontSize = () => size() * 0.6;
+
   const title = () =>
     props.showTitle && (
       <div
@@ -54,11 +61,12 @@ export default function Logo(props) {
         {__APP_NAME__}
       </div>
     );
+
   // Wraps `children` in whatever interactive element this instance
   // needs: a plain button when onClick is given (takes priority over
   // linkable), a home link with the original hover effects when
   // linkable, or a plain flex container otherwise (Login's case).
-  const Wrap = (p) =>
+  const Wrap = (p: ParentProps) =>
     props.onClick ? (
       <button type="button" onClick={props.onClick} class="contents">
         {p.children}
@@ -73,12 +81,13 @@ export default function Logo(props) {
     ) : (
       <div class="flex items-center gap-2">{p.children}</div>
     );
+
   return (
-<div class="flex items-center gap-2">
-    <Wrap>
-      {icon}
-      {title()}
-    </Wrap>
+    <div class="flex items-center gap-2">
+      <Wrap>
+        {icon}
+        {title()}
+      </Wrap>
       {/* Rendered outside Wrap so it's never part of the clickable
           logo (button/link). Only shown when showVersion is set (e.g.
           TopBar hides it on mobile to save space), not by default. */}

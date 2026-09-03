@@ -13,7 +13,7 @@ export default function Login() {
   const [error, setError] = createSignal("");
   const [pending, setPending] = createSignal(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     setError("");
     setPending(true);
@@ -42,7 +42,7 @@ export default function Login() {
           type="email"
           placeholder="Email"
           value={email()}
-          onInput={(e) => setEmail(e.target.value)}
+          onInput={(e) => setEmail(e.currentTarget.value)}
           required
           autofocus
           class="rounded-md border border-border bg-bg px-3 py-2 text-text"
@@ -51,7 +51,7 @@ export default function Login() {
           type="password"
           placeholder="Password"
           value={password()}
-          onInput={(e) => setPassword(e.target.value)}
+          onInput={(e) => setPassword(e.currentTarget.value)}
           required
           class="rounded-md border border-border bg-bg px-3 py-2 text-text"
         />

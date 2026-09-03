@@ -1,12 +1,17 @@
-import { createSignal, onCleanup, Show } from "solid-js";
+// frontend/src/lib/auth.tsx
+import { createSignal, onCleanup, Show, type JSX } from "solid-js";
 
 import pb from "./pb";
 import Login from "../routes/Login";
 
+interface AuthGateProps {
+  children: JSX.Element;
+}
+
 // AuthGate blocks the whole app behind Login until a valid superuser
 // session exists, tracking pb.authStore so it reacts immediately to
 // both login and logout.
-export default function AuthGate(props) {
+export default function AuthGate(props: AuthGateProps) {
   const [authed, setAuthed] = createSignal(pb.authStore.isValid);
   const unsubscribe = pb.authStore.onChange(() =>
     setAuthed(pb.authStore.isValid),
