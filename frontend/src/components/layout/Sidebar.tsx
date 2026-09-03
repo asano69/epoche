@@ -3,7 +3,7 @@ import { A } from "@solidjs/router";
 import { Search } from "@kobalte/core/search";
 import SearchIcon from "lucide-solid/icons/search";
 
-import { contexts, contextsLoaded, loadContexts } from "../../lib/contexts";
+import { projects, projectsLoaded, loadProjects } from "../../lib/projects";
 import Loading from "../Loading";
 
 export interface SidebarProps {
@@ -18,21 +18,19 @@ export default function Sidebar(props: SidebarProps) {
   const [query, setQuery] = createSignal("");
 
   // Sidebar is always mounted (see MainLayout), so this is the one place
-  // that triggers the initial load of the shared contexts store. Once
-  // loaded, create/rename/delete elsewhere in the app keep it in sync
-  // without Sidebar needing to re-fetch.
+  // that triggers the initial load of the shared projects store.
   onMount(() => {
-    loadContexts();
+    loadProjects();
   });
 
   // Client-side filtering: Search's own options/suggestion machinery is
   // unused here (see options={[]} below), so this is what actually
   // reacts to the typed query.
-  const filteredContexts = createMemo(() => {
+  const filteredProjects = createMemo(() => {
     const q = query().trim().toLowerCase();
-    if (!q) return contexts();
-    return contexts().filter((context) =>
-      context.context.toLowerCase().includes(q),
+    if (!q) return projects();
+    return projects().filter((project) =>
+      project.label.toLowerCase().includes(q),
     );
   });
 
@@ -60,7 +58,7 @@ export default function Sidebar(props: SidebarProps) {
           <Search
             options={[]}
             triggerMode="manual"
-            placeholder="Search contexts…"
+            placeholder="Search projects…"
             onInputChange={setQuery}
           >
             <Search.Control class="flex items-center gap-2 rounded-md border border-border bg-field px-3 py-2">
@@ -76,22 +74,22 @@ export default function Sidebar(props: SidebarProps) {
             its own overflow-y-auto within the fixed-height <aside>
             (h-full, bounded by MainLayout's min-h-0 flex row). */}
         <nav class="flex-1 overflow-y-auto p-2">
-          <Show when={contextsLoaded()} fallback={<Loading />}>
+          <Show when={projectsLoaded()} fallback={<Loading />}>
             <Show
-              when={filteredContexts().length > 0}
+              when={filteredProjects().length > 0}
               fallback={
                 <p class="px-2 py-1.5 text-sm text-border">
-                  No contexts found.
+                  No projects found.
                 </p>
               }
             >
-              <For each={filteredContexts()}>
-                {(context) => (
+              <For each={filteredProjects()}>
+                {(project) => (
                   <A
-                    href={`/contexts/${encodeURIComponent(context.context)}`}
+                    href={`/projects/${encodeURIComponent(project.label)}`}
                     class="block rounded-md px-2 py-1.5 text-md text-text transition-colors hover:bg-hover-bg"
                   >
-                    {context.context}
+                    {project.label}
                   </A>
                 )}
               </For>
