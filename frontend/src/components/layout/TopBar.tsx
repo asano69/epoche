@@ -1,6 +1,6 @@
 import { For, Show } from "solid-js";
 import { A } from "@solidjs/router";
-import { Menu, X, Cone as Focus, Notebook } from "../../lib/icons";
+import { Menu, X, Cone as Focus, Notebook, Network } from "../../lib/icons";
 import Logo from "../Logo";
 
 import ThemeToggle from "./ThemeToggle";
@@ -19,6 +19,7 @@ export interface TopBarProps {
 const NAV_ITEMS = [
   { href: "/focus", label: "Focus", icon: Focus },
   { href: "/diary", label: "Diary", icon: Notebook },
+  { href: "/graph", label: "Graph", icon: Network },
 ];
 
 // The hamburger button here only toggles the Sidebar (owned by
