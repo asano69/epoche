@@ -1138,6 +1138,21 @@ func init() {
 						"type": "relation"
 					},
 					{
+						"help": "",
+						"hidden": false,
+						"id": "file2366146245",
+						"maxSelect": 0,
+						"maxSize": 0,
+						"mimeTypes": null,
+						"name": "cover",
+						"presentable": false,
+						"protected": false,
+						"required": false,
+						"system": false,
+						"thumbs": null,
+						"type": "file"
+					},
+					{
 						"hidden": false,
 						"id": "autodate2990389176",
 						"name": "created",
@@ -1285,7 +1300,7 @@ func init() {
 						"max": 0,
 						"min": 0,
 						"name": "date",
-						"pattern": "",
+						"pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$",
 						"presentable": false,
 						"primaryKey": false,
 						"required": true,
