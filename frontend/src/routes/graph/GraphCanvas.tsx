@@ -172,10 +172,13 @@ export default function GraphCanvas(props: GraphCanvasProps) {
   };
 
   // Draws a straight line between node centers, shortened near the
-  // target so the arrowhead marker lands close to that node's edge
-  // instead of being hidden underneath it. The shrink distance is an
-  // approximation (roughly half the node's width) rather than an
-  // exact rectangle intersection, which keeps the math simple.
+  // target so the arrowhead marker lands exactly on that node's
+  // rectangular edge instead of being hidden underneath it (or, at
+  // steep angles, stopping short and leaving a gap). The source end
+  // is left at the node's center on purpose: nodes are drawn after
+  // edges (see the <For each={positioned()}> block below), so the
+  // portion of the line inside the source rectangle is already
+  // covered up.
   const edgePath = (edge: GraphEdge) => {
     const source = nodeById(edge.source);
     const target = nodeById(edge.target);
@@ -191,11 +194,20 @@ export default function GraphCanvas(props: GraphCanvasProps) {
     ];
     const dx = targetCenter[0] - sourceCenter[0];
     const dy = targetCenter[1] - sourceCenter[1];
-    const dist = Math.hypot(dx, dy) || 1;
-    const shrink = NODE_WIDTH / 2;
+    const halfWidth = NODE_WIDTH / 2;
+    const halfHeight = NODE_HEIGHT / 2;
+    // Scales (dx, dy) down until it first touches the target
+    // rectangle's left/right or top/bottom edge, whichever comes
+    // first for this particular angle -- the standard way to find
+    // where a ray from a rectangle's center exits through its
+    // boundary.
+    const scale =
+      dx === 0 && dy === 0
+        ? 0
+        : 1 / Math.max(Math.abs(dx) / halfWidth, Math.abs(dy) / halfHeight);
     const targetEdge: [number, number] = [
-      targetCenter[0] - (dx / dist) * shrink,
-      targetCenter[1] - (dy / dist) * shrink,
+      targetCenter[0] - dx * scale,
+      targetCenter[1] - dy * scale,
     ];
 
     return d3.line()([sourceCenter, targetEdge]) ?? "";
